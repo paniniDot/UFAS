@@ -8,15 +8,6 @@ void MqttManager::addPublisher(const char* topic, Adafruit_MQTT_Publish* publish
     topicPublishers[topic] = publisher;
 }
 
-void MqttManager::update(Event<String>* e) {
-    const char* topic = getTopic(e->getSourceType());
-    if (topicPublishers.find(topic) != topicPublishers.end()) {
-        publishMessage(topic, e->getEventArgs().c_str());
-    } else {
-        Serial.println("Publisher not found for the topic");
-    }
-}
-
 void MqttManager::getTopic(EventSourceType sourceType) {
     switch (sourceType) {
         case ROLL:
@@ -25,6 +16,15 @@ void MqttManager::getTopic(EventSourceType sourceType) {
             return "room1/light";
         default:
             return "unknown";
+    }
+}
+
+void MqttManager::update(Event<String>* e) {
+    const char* topic = getTopic(e->getSourceType());
+    if (topicPublishers.find(topic) != topicPublishers.end()) {
+        publishMessage(topic, e->getEventArgs().c_str());
+    } else {
+        Serial.println("Publisher not found for the topic");
     }
 }
 
