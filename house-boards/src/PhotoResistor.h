@@ -1,9 +1,10 @@
 #ifndef __PHOTORESISTOR__
 #define __PHOTORESISTOR__
 #include "Arduino.h"
-#include "JSONSensor.h"
+#include "observer/Subject.h"
+#include "observer/Event.h"
 
-class PhotoResistor : public JSONSensor<int>
+class PhotoResistor : Subject<int>
 {
 
 private:
@@ -12,9 +13,7 @@ private:
 
 public:
   PhotoResistor(int pin);
-  String toJson() {
-    return this->getJson(this->isDark());
-  }  
+  void notify();
 };
 
 #endif

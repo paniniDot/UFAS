@@ -3,13 +3,12 @@
 
 enum EventSourceType
 {
-    SERVO,
-    LIGHT,
-    SLIDER,
-    CHECKBOX,
-    BLUETOOTH,
-    MSG_SERVICE
-
+    PIR,
+    ROLL,
+    PHOTO_RESISTOR,
+    MANUAL_LIGHT,
+    MANUAL_ROLL,
+    LIGHT
 };
 
 #endif

@@ -3,10 +3,14 @@
 
 #include <Servo.h>
 #include "Arduino.h"
-#include "JSONSensor.h"
 #include "TimeLib.h"
+#include "JSONSensor.h"
+#include "observer/Observer.h"
+#include "observer/Subject.h"
+#include "observer/Event.h"
+#include "observer/EventSourceType.h"
 
-class Roll : public JSONSensor
+class Roll : public JSONSensor<int>, Observer<int>, Subject<String>
 {
 private:
 
@@ -15,13 +19,13 @@ private:
   int isDay;
   int pir_state;
   int manual_state;
-  void handleMessage(Msg* msg);
+  void handleEvent(Event<int> *e)
   void updateRollState();
 
 public:
   Roll(int pin);
+  void update(Event<int> *e);
   void notify();
-  void update(Event<Msg> *e);
 };
 
 #endif

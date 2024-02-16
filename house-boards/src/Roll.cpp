@@ -10,26 +10,22 @@ Roll::Roll(int pin)
   this->manual_state = 0;
 }
 
-void Roll::update(Event<Msg> *e) {
-  this->handleMessage(e->getEventArgs());
+void Roll::update(Event<int> *e) {
+  this->handleEvent(e);
   this->updateRollState();
   this->notify();
 }
 
-void Roll::handleMessage(Msg *msg) {
-  String sensorName = msg->getSensorName();
-  long timestamp = msg->getTimestamp();
-  int measure = msg->getMeasure();
-
-  if (sensorName.equals("pir_sensor")) {
+void Roll::handleEvent(Event<int> *e) {
+  EventSourceType source = e->getSrcType();
+  int measure = e->getEventArgs();
+  if (source == EventSourceType::PIR) {
     setTime(timestamp);
     this->pir_state = measure;
     this->isDay = (hour() >= 8 && hour() < 19) ? 1 : 0;
-  } else if (sensorName.equals("manual_roll")) {
+  } else if (source == EventSourceType::MANUAL_ROLL) {
     this->manual_state = measure;
-  } else if (sensorName.equals("roll")) {
-    this->rollState = measure;
-  }
+  } 
 }
 
 void Roll::updateRollState() {
@@ -44,10 +40,9 @@ void Roll::updateRollState() {
 }
 
 void Roll::notify() {
-  String msg = this->getJson(this->rollState);
-  Event<Msg> *e = new Event<Msg>(EventSourceType::SERVO, new Msg(msg));
-  for (int i = 0; i < this->getNObservers(); i++) {
-    this->getObservers()[i]->update(e);
+  Event<String> *json = new Event<String>(EventSourceType::ROLL, new String(this->getJson(this->rollState)));
+  for(auto observer : this->observers) {
+    observer->update(json);
   }
-  delete e;
+  delete json;
 }

@@ -10,24 +10,21 @@ Light::Light(int pin)
   this->manual_state = 0;
 }
 
-void Light::update(Event<Msg> *e) {
-  this->handleMessage(e->getEventArgs());
+void Light::update(Event<int> *e) {
+  this->handleEvent(e);
   this->updateLightState();
   this->notify();
 }
 
-void Light::handleMessage(Msg *msg) {
-  String sensorName = msg->getSensorName();
-  long timestamp = msg->getTimestamp();
-  int measure = msg->getMeasure();
-  if (sensorName.equals("manual_light")) {
+void Light::handleEvent(Event<int> *e) {
+  EventSourceType source = e->getSrcType();
+  int measure = e->getEventArgs();
+  if (source == EventSourceType::MANUAL_LIGHT) {
     this->manual_state = measure;
-  } else if (sensorName.equals("pir_sensor")) {
+  } else if (source == EventSourceType::PIR) {
     this->pir_state = measure;
-  } else if (sensorName.equals("photo_resistor")) {
+  } else if (source == EventSourceType::PHOTO_RESISTOR) {
     this->photoresistor_state = measure;
-  } else if (sensorName.equals("light")) {
-    this->lightState = measure;
   }
 }
 
@@ -39,10 +36,9 @@ void Light::updateLightState() {
 }
 
 void Light::notify() {
-  String msg = this->getJson(this->lightState);
-  Event<Msg> *e = new Event<Msg>(EventSourceType::LIGHT, new Msg(msg));
-  for (int i = 0; i < this->getNObservers(); i++) {
-    this->getObservers()[i]->update(e);
+  Event<String> *json = new Event<String>(EventSourceType::LIGHT, new String(this->getJson(this->lightState)));
+  for(auto observer : this->observers) {
+    observer->update(json);
   }
-  delete e;
+  delete json;
 }

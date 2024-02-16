@@ -3,22 +3,25 @@
 
 #include "Arduino.h"
 #include "JSONSensor.h"
+#include "observer/Observer.h"
+#include "observer/Subject.h"
+#include "observer/Event.h"
+#include "observer/EventSourceType.h"
 
-class Light : public JSONSensor
+class Light : public JSONSensor<int>, Observer<int>, Subject<String>
 {
 private:
-  int lightState;
   int pin;
   int pir_state;
   int photoresistor_state;
   int manual_state;
-  void handleMessage(Msg* msg);
+  void handleEvent(Event<int> *e)
   void updateLightState();
 
 public:
   Light(int pin);
+  void update(Event<int> *e);
   void notify();
-  void update(Event<Msg> *e);
 };
 
 #endif
