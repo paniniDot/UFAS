@@ -14,6 +14,8 @@ void MqttManager::getTopic(EventSourceType sourceType) {
             return "room1/roll";
         case LIGHT:
             return "room1/light";
+        case CAMERA:
+            return "room1/cam";
         default:
             return "unknown";
     }

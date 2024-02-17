@@ -14,13 +14,12 @@ private:
     std::map<String, Adafruit_MQTT_Publish*> topicPublishers;
 
     const char* getTopic(EventSourceType sourceType);
-
+    void publishMessage(const char* topic, const char* message);
 public:
     MqttManager(Adafruit_MQTT_Client* client);
 
     void addPublisher(const char* topic, Adafruit_MQTT_Publish* publisher);
     void update(Event<String>* e) override;
-    void publishMessage(const char* topic, const char* message);
 };
 
 #endif

@@ -25,6 +25,7 @@ const int mqtt_port = 1883;
 // MQTT Topics
 const char* topic_light = "room1/light";
 const char* topic_roll = "room1/roll";
+const char* topic_cam = "room1/cam";
 
 // Notification Configuration
 unsigned long lastNotifyTime = 0;
@@ -35,9 +36,14 @@ WiFiClient espClient;
 Adafruit_MQTT_Client mqttClient(&espClient, mqtt_server, mqtt_port);
 Adafruit_MQTT_Publish publisher_light(&mqttClient, topic_light);
 Adafruit_MQTT_Publish publisher_roll(&mqttClient, topic_roll);
+Adafruit_MQTT_Publish publisher_cam(&mqttClient, topic_cam);
 
 // MqttManager and Hardware Objects
 MqttManager mqttManager(&mqttClient);
+mqttManager.addPublisher(topic_light, &publisher_light);
+mqttManager.addPublisher(topic_roll, &publisher_roll);
+mqttManager.addPublisher(topic_cam, &publisher_cam);
+
 PhotoResistor resistor(PHOTO_RESISTOR_PIN);
 Pir pir(PIR_PIN);
 Light light(PHOTO_RESISTOR_PIN);
@@ -72,7 +78,6 @@ void setup() {
   connectToWIFI();
   connectToMQTT();
 
-  // Attach objects to MqttManager
   pir.attach(light);
   pir.attach(roll);
   resistor.attach(light);
