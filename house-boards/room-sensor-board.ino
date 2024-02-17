@@ -5,7 +5,8 @@
 #include "src/PhotoResistor.h"
 #include "src/Light.h"
 #include "src/Roll.h"
-#include "MqttManager.h"
+#include "src/MqttManager.h"
+#include "src/Camera.h"
 
 // Pin Definitions
 #define PIR_PIN 34
@@ -41,6 +42,7 @@ PhotoResistor resistor(PHOTO_RESISTOR_PIN);
 Pir pir(PIR_PIN);
 Light light(PHOTO_RESISTOR_PIN);
 Roll roll(ROLL_PIN);
+Camera camera;
 
 void connectToWIFI() {
   delay(100);
@@ -77,6 +79,7 @@ void setup() {
   resistor.attach(roll);
   light.attach(&mqttManager);
   roll.attach(&mqttManager);
+  camera.attach(&mqttManager);
 }
 
 void loop() {
@@ -93,6 +96,7 @@ void loop() {
   if (currentTime - lastNotifyTime >= notifyInterval) {
     light.notify();
     roll.notify();
+    camera.notify();
     lastNotifyTime = currentTime;
   }
 }

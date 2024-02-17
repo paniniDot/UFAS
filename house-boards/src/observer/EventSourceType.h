@@ -8,7 +8,8 @@ enum EventSourceType
     PHOTO_RESISTOR,
     MANUAL_LIGHT,
     MANUAL_ROLL,
-    LIGHT
+    LIGHT,
+    CAMERA
 };
 
 #endif
