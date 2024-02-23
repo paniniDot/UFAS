@@ -9,11 +9,11 @@ import io.vertx.mqtt.MqttEndpoint;
 import io.vertx.mqtt.MqttServer;
 import io.vertx.mqtt.MqttServerOptions;
 import io.vertx.mqtt.messages.codes.MqttSubAckReasonCode;
-import jssc.SerialPortException;
+import io.vertx.core.json.JsonObject;
 
 public class MQTTService {
 
-	public MQTTService(int port, String ip, SerialService serial) {
+	public MQTTService(int port, String ip, HTTPService httpService) {
 		Vertx vertx = Vertx.vertx();
 		final List<MqttEndpoint> endpoints = new ArrayList<>();
 		MqttServerOptions options = new MqttServerOptions().setHost(ip).setPort(port);
@@ -40,12 +40,10 @@ public class MQTTService {
 			});
 
 			endpoint.publishHandler(message -> {
-				try {
-					serial.sendMsg(message.payload().toString());
-				} catch (SerialPortException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				String room = message.topicName().split("/")[0];
+				String msg = message.payload().toString();
+				JsonObject jsonMsg = new JsonObject(msg).put("room", room);
+				httpService.handleSendData(jsonMsg.encode());
 			});
 			endpoint.accept(false);
 		}).listen().onComplete(ar -> {
