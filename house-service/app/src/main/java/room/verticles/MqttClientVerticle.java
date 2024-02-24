@@ -11,7 +11,7 @@ public class MqttClientVerticle extends AbstractVerticle {
     public void start() {
         MqttClient mqttClient = MqttClient.create(vertx);
 
-        mqttClient.connect(1883, "mqtt-server-host", ar -> {
+        mqttClient.connect(1883, "localhost", ar -> {
             if (ar.succeeded()) {
                 System.out.println("Connected to MQTT server");
 

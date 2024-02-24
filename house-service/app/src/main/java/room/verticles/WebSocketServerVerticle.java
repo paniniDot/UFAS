@@ -12,7 +12,7 @@ public class WebSocketServerVerticle extends AbstractVerticle {
 
     @Override
     public void start() {
-        HttpServerOptions httpOptions = new HttpServerOptions().setHost("192.168.2.2").setPort(8080);
+        HttpServerOptions httpOptions = new HttpServerOptions().setHost("localhost").setPort(8080);
         HttpServer httpServer = vertx.createHttpServer(httpOptions);
 
         Router router = Router.router(vertx);
