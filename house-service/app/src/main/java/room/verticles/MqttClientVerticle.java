@@ -13,16 +13,19 @@ public class MqttClientVerticle extends AbstractVerticle {
 
         mqttClient.connect(1883, "localhost", ar -> {
             if (ar.succeeded()) {
-                System.out.println("Connected to MQTT server");
+                log("Connected to MQTT server");
 
                 vertx.eventBus().consumer("mqtt.message", message -> {
-                    // Forward messages from WebSocket to ESP
                     String payload = (String) message.body();
                     mqttClient.publish("mqtt/topic", Buffer.buffer(payload), MqttQoS.AT_MOST_ONCE, false, false);
                 });
             } else {
-                ar.cause().printStackTrace();
+                log("Unable to connect " + ar.cause().getMessage());
             }
         });
+    }
+
+    private void log(String message) {
+        System.out.println("[MQTT Client] " + message);
     }
 }

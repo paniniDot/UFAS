@@ -15,18 +15,24 @@ public class MqttServerVerticle extends AbstractVerticle {
         MqttServer mqttServer = MqttServer.create(vertx, mqttOptions);
 
         mqttServer.endpointHandler(endpoint -> {
+            log("connected client " + endpoint.clientIdentifier());
             endpoint.publishHandler(message -> {
                 String payload = message.payload().toString();
                 vertx.eventBus().publish("mqtt.message", payload);
             });
+            endpoint.accept(false);
         });
 
         mqttServer.listen(ar -> {
             if (ar.succeeded()) {
-                System.out.println("MQTT server started on port " + ar.result().actualPort());
+                log("MQTT server started on port " + ar.result().actualPort());
             } else {
-                ar.cause().printStackTrace();
+                log("MQTT server error on start" + ar.cause().getMessage());
             }
         });
+    }
+
+    private void log(String message) {
+        System.out.println("[MQTT Server] " + message);
     }
 }

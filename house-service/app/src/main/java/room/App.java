@@ -8,11 +8,12 @@ import room.verticles.WebSocketServerVerticle;
 
 public class App {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         Vertx vertx = Vertx.vertx();
 
         vertx.deployVerticle(new MqttServerVerticle());
         vertx.deployVerticle(new WebSocketServerVerticle());
+        Thread.sleep(1000);
         vertx.deployVerticle(new MqttClientVerticle());
     }
 }

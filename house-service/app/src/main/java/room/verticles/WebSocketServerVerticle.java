@@ -17,7 +17,6 @@ public class WebSocketServerVerticle extends AbstractVerticle {
 
         Router router = Router.router(vertx);
 
-        // Enable WebSocket and SockJS support
         SockJSHandler sockJSHandler = SockJSHandler.create(vertx);
         SockJSBridgeOptions bridgeOptions = new SockJSBridgeOptions().addOutboundPermitted(new PermittedOptions().setAddress("mqtt.message"));
         sockJSHandler.bridge(bridgeOptions);
@@ -27,10 +26,14 @@ public class WebSocketServerVerticle extends AbstractVerticle {
 
         httpServer.listen(ar -> {
             if (ar.succeeded()) {
-                System.out.println("WebSocket server started on port " + ar.result().actualPort());
+                log("WebSocket server started on port " + ar.result().actualPort());
             } else {
                 ar.cause().printStackTrace();
             }
         });
+    }
+
+    private void log(String message) {
+        System.out.println("[WebSocket Server] " + message);
     }
 }
