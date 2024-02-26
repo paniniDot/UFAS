@@ -16,3 +16,12 @@ function sendMessage(message) {
   webSocket.send(message);
   console.log('Messaggio inviato:', message);
 }
+
+
+document.getElementById('websocketForm').addEventListener('submit', function (event) {
+  event.preventDefault();
+  const messageInput = document.getElementById('message');
+  const message = messageInput.value;
+  sendMessage(message);
+  messageInput.value = ''; 
+});

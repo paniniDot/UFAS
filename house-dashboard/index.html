@@ -1,74 +1,48 @@
 <!DOCTYPE html>
-<html lang="it">
-
+<html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/bootstrap-icons.css">
-    <link rel="stylesheet" href="css/style.css">
-    <script src="js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.plot.ly/plotly-2.24.2.js" charset="utf-8"></script>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <title>Smart Home</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WebSocket Form</title>
 </head>
+<body>
 
-<body class="d-flex flex-column vh-100" data-bs-theme="light">
-    <header class="d-flex justify-content-center shadow py-3">
-        <h1>Smart Home</h1>
-    </header>
-    <div class="d-flex align-items-center justify-content-center h-100">
-        <div class="card col-5 m-auto">
-            <div class="card-header">rool</div>
-            <div class="card-body">
-                <form>
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="" id="rollcheck">
-                        <label class="form-check-label" for="rollcheck">manuale</label>
-                    </div>
-                    <label for="rollrange" class="form-label"></label>
-                    <div class="d-flex col-12 justify-content-around">
-                        <i class="bi bi-arrow-down"></i>
-                        <input type="range" class="form-range col-6" min="0" max="100" step="10" value="0"
-                            id="rollrange">
-                        <span class="position-absolute badge start-0 rounded-pill bg-primary"
-                            style="transform: translateX(+12px) translateY(-120%);" id="rollvalue">0
-                        </span>
-                        <i class="bi bi-arrow-up"></i>
-                    </div>
-                </form>
-                </form>
-            </div>
-            <div class="card-footer ">
-                <div id="rollchart"></div>
-            </div>
-        </div>
-        <div class="card col-5 m-auto">
-            <div class="card-header">light</div>
-            <div class="card-body">
-                <form>
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="" id="lightcheck">
-                        <label class="form-check-label" for="lightcheck">manuale</label>
-                    </div>
-                    <div class="form-check form-switch">
-                        <input class="form-check-input" type="checkbox" role="switch" id="lightswitch">
-                        <label class="form-check-label" for="lightswitch">light</label>
-                        <i class="bi bi-lightbulb-off"id="icon"></i>
-                    </div>
-                </form>
-            </div>
-            <div class="card-footer">
-                <div id="lightchart"></div>
-            </div>
-        </div>
-    </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/11.0.2/bootstrap-slider.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="js/socket.js"></script>
-    <script src="js/dashboard.js"></script>
-    <script src="js/charts.js"></script>
+  <form id="websocketForm">
+    <label for="message">Messaggio:</label>
+    <input type="text" id="message" name="message" required>
+    <button type="submit">Invia</button>
+  </form>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const webSocket = new WebSocket('ws://localhost:8080/eventbus');
+
+      webSocket.onopen = function () {
+        console.log('Socket attivo.');
+      };
+
+      webSocket.onerror = function (error) {
+        console.error('Errore nella connessione WebSocket:', error);
+      };
+
+      webSocket.onmessage = function receiveMessage(event) {
+        console.log('WebSocket message received:', event);
+      };
+
+      function sendMessage(message) {
+        webSocket.send(message);
+        console.log('Messaggio inviato:', message);
+      }
+
+      document.getElementById('websocketForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+        const messageInput = document.getElementById('message');
+        const message = messageInput.value;
+        sendMessage(message);
+        messageInput.value = ''; // Clear the input field after sending the message
+      });
+    });
+  </script>
+
 </body>
-
-
 </html>

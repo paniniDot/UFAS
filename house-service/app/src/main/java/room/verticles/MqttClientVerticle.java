@@ -16,6 +16,7 @@ public class MqttClientVerticle extends AbstractVerticle {
                 log("Connected to MQTT server");
 
                 vertx.eventBus().consumer("mqtt.message", message -> {
+                    log("Received message from event bus: " + message.body());
                     String payload = (String) message.body();
                     mqttClient.publish("mqtt/topic", Buffer.buffer(payload), MqttQoS.AT_MOST_ONCE, false, false);
                 });
