@@ -1,6 +1,7 @@
 package room.verticles;
 
 import io.vertx.core.AbstractVerticle;
+import io.vertx.mqtt.MqttEndpoint;
 import io.vertx.mqtt.MqttServer;
 import io.vertx.mqtt.MqttServerOptions;
 
@@ -14,28 +15,33 @@ public class MqttServerVerticle extends AbstractVerticle {
 
         MqttServer mqttServer = MqttServer.create(vertx, mqttOptions);
 
-        vertx.eventBus().consumer("web.to.mqtt", message -> {
-            String payload = (String) message.body();
-            log("Received message on web.to.mqtt: " + payload);
+        vertx.eventBus().consumer("webserver.to.mqttserver", message -> {
+            String payload = message.body().toString();
+            handleWebToMqttMessage(payload);
         });
 
-        mqttServer.endpointHandler(endpoint -> {
-            log("connected client " + endpoint.clientIdentifier());
-            endpoint.publishHandler(message -> {
-                log("Just received message on [" + message.topicName() + "] payload [" + message.payload().toString() + "] with QoS [" + message.qosLevel() + "]");
-                String payload = message.payload().toString();
-                vertx.eventBus().publish("mqtt.to.web", payload);
-            });
-            endpoint.accept(false);
-        });
+        mqttServer.endpointHandler(this::handleEndpoint);
 
         mqttServer.listen(ar -> {
             if (ar.succeeded()) {
                 log("MQTT server started on port " + ar.result().actualPort());
             } else {
-                log("MQTT server error on start" + ar.cause().getMessage());
+                log("MQTT server error " + ar.cause().getMessage());
             }
         });
+    }
+
+    private void handleWebToMqttMessage(String payload) {
+        vertx.eventBus().publish("mqttserver.to.mqttclient", payload);
+    }
+
+    private void handleEndpoint(MqttEndpoint endpoint) {
+        log("connected client " + endpoint.clientIdentifier());
+        endpoint.publishHandler(message -> {
+            String mqttPayload = message.payload().toString();
+            vertx.eventBus().publish("mqttserver.to.webserver", mqttPayload);
+        });
+        endpoint.accept(false);
     }
 
     private void log(String message) {
