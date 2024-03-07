@@ -1,10 +1,10 @@
-package room;
+package backend;
 
 import io.vertx.core.Vertx;
-import room.verticles.MqttClientVerticle;
+import backend.verticles.MqttClientVerticle;
 
-import room.verticles.MqttServerVerticle;
-import room.verticles.WebSocketServerVerticle;
+import backend.verticles.MqttServerVerticle;
+import backend.verticles.WebSocketServerVerticle;
 
 public class App {
 

@@ -1,4 +1,4 @@
-package room.utils;
+package backend.utils;
 
 import com.google.gson.JsonParser;
 

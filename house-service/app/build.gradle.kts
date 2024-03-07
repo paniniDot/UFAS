@@ -46,7 +46,7 @@ dependencies {
 
 application {
     // Define the main class for the application.
-    mainClass.set("room.App")
+    mainClass.set("backend.App")
 }
 
 tasks.named<Test>("test") {

@@ -1,4 +1,4 @@
-package room.verticles;
+package backend.verticles;
 
 import io.netty.handler.codec.mqtt.MqttQoS;
 import io.vertx.core.AbstractVerticle;
