@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+        <title>Vert.x with SockJS</title>
+        <script src="https://unpkg.io/sockjs-client@1.5.0/dist/sockjs.min.js"></script>
+        <script src='https://unpkg.io/@vertx/eventbus-bridge-client.js@1.0.0-1/vertx-eventbus.js'></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/11.0.2/bootstrap-slider.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script>
+            var eb = new EventBus('http://localhost:8080/eventbus');
+            eb.onopen = () => {
+                // set a handler to receive a message
+                eb.registerHandler('webserver.to.webclient', (error, message) => {
+                    console.log('received a message: ' + JSON.stringify(message));
+                });
+            // send a message
+            setInterval(() => {
+                let msg = {name: 'tim', age: 587};
+                eb.publish('webclient.to.webserver', msg);
+                console.log('sent a message' + JSON.stringify(msg));
+            }, 10000);
+        }
+        </script>
+</head>
+
+<body class="d-flex flex-column vh-100" data-bs-theme="light">
+    <header class="d-flex justify-content-center shadow py-3">
+        <h1>Smart Home</h1>
+    </header>
+    <button type="button" class="btn btn-primary m-2 col-2" onclick="window.location.href='room.html'">Room</button>
+</body>
+</html>
