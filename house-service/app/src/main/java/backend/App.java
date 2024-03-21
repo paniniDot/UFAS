@@ -12,8 +12,8 @@ public class App {
         Vertx vertx = Vertx.vertx();
 
         vertx.deployVerticle(new MqttServerVerticle());
-        vertx.deployVerticle(new WebSocketServerVerticle());
-        Thread.sleep(1000);
-        vertx.deployVerticle(new MqttClientVerticle());
+        //vertx.deployVerticle(new WebSocketServerVerticle());
+        //Thread.sleep(3000);
+        //vertx.deployVerticle(new MqttClientVerticle());
     }
 }

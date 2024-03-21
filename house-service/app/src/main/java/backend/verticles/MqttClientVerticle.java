@@ -3,15 +3,16 @@ package backend.verticles;
 import io.netty.handler.codec.mqtt.MqttQoS;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.mqtt.MqttClient;
+import io.vertx.mqtt.MqttClientOptions;
 import io.vertx.core.buffer.Buffer;
 
 public class MqttClientVerticle extends AbstractVerticle {
 
     @Override
     public void start() {
-        MqttClient mqttClient = MqttClient.create(vertx);
 
-        mqttClient.connect(1883, "localhost", ar -> {
+        MqttClient mqttClient = MqttClient.create(vertx);
+        mqttClient.connect(1883, "192.168.1.64").onComplete(ar -> {
             if (ar.succeeded()) {
                 log("Connected to MQTT server");
 
@@ -21,6 +22,7 @@ public class MqttClientVerticle extends AbstractVerticle {
                 });
             } else {
                 log("Unable to connect " + ar.cause().getMessage());
+                ar.cause().printStackTrace(); // Log the stack trace
             }
         });
     }

@@ -4,7 +4,7 @@
 #include "observer/Subject.h"
 #include "observer/Event.h"
 
-class PhotoResistor : Subject<int>
+class PhotoResistor : public Subject<int>
 {
 
 private:

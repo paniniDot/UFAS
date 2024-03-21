@@ -9,23 +9,24 @@
 #include "src/Camera.h"
 
 // Pin Definitions
-#define PIR_PIN 34
-#define PHOTO_RESISTOR_PIN 35
-#define LIGHT_PIN 36 // tbd
-#define ROLL_PIN 39 // tbd
+#define PIR_PIN 25
+#define PHOTO_RESISTOR_PIN 27
+#define LIGHT_PIN 32  // tbd
+#define ROLL_PIN 33   // tbd
 
 // WiFi Configuration
-const char* ssid = "asus";
-const char* password = "0123456789";
+const char* ssid = "Fast$wag";
+const char* password = "SwAg2k24";
 
 // MQTT Configuration
-const char* mqtt_server = "192.168.2.2";
+const char* mqtt_server = "192.168.1.64";
 const int mqtt_port = 1883;
 
 // MQTT Topics
 const char* topic_light = "room1/light";
 const char* topic_roll = "room1/roll";
 const char* topic_cam = "room1/cam";
+const char* topic_receive = "mqttserver.to.mqttclient";
 
 // Notification Configuration
 unsigned long lastNotifyTime = 0;
@@ -39,17 +40,13 @@ Adafruit_MQTT_Publish publisher_roll(&mqttClient, topic_roll);
 Adafruit_MQTT_Publish publisher_cam(&mqttClient, topic_cam);
 
 // MqttManager and Hardware Objects
-MqttManager mqttManager(&mqttClient);
-mqttManager.addPublisher(topic_light, &publisher_light);
-mqttManager.addPublisher(topic_roll, &publisher_roll);
-mqttManager.addPublisher(topic_cam, &publisher_cam);
+MqttManager* mqttManager;
 
-PhotoResistor resistor(PHOTO_RESISTOR_PIN);
-Pir pir(PIR_PIN);
-Light light(PHOTO_RESISTOR_PIN);
-Roll roll(ROLL_PIN);
-Camera camera;
-
+PhotoResistor* resistor;
+Pir* pir;
+Light* light;
+Roll* roll;
+//Camera* camera;
 void connectToWIFI() {
   delay(100);
   Serial.print("Connecting to ");
@@ -73,18 +70,37 @@ void connectToMQTT() {
   Serial.println("connected");
 }
 
+void messageReceived(char* message, uint16_t len) {
+  Serial.print("Message received on topic '");
+  for (int i = 0; i < len; i++) {
+    Serial.print((char)message[i]);
+  }
+  Serial.println();
+}
+
 void setup() {
   Serial.begin(115200);
   connectToWIFI();
   connectToMQTT();
+  mqttManager = new MqttManager(&mqttClient);
+  mqttManager->addPublisher(topic_light, &publisher_light);
+  mqttManager->addPublisher(topic_roll, &publisher_roll);
+  mqttManager->addPublisher(topic_cam, &publisher_cam);
+  /*
+  pir = new Pir(PIR_PIN);
+  resistor = new PhotoResistor(PHOTO_RESISTOR_PIN);
+  light = new Light(LIGHT_PIN);
+  roll = new Roll(ROLL_PIN);
+  //camera = new Camera();
+  pir->attach(light);
+  pir->attach(roll);
+  resistor->attach(light);
+  resistor->attach(roll);
+  light->attach(mqttManager);
+  roll->attach(mqttManager);
 
-  pir.attach(light);
-  pir.attach(roll);
-  resistor.attach(light);
-  resistor.attach(roll);
-  light.attach(&mqttManager);
-  roll.attach(&mqttManager);
-  camera.attach(&mqttManager);
+  subscribe_mqtt_server.setCallback(messageReceived);
+  mqttClient.subscribe(&subscribe_mqtt_server);*/
 }
 
 void loop() {
@@ -96,12 +112,12 @@ void loop() {
     Serial.println("MQTT server connection lost");
     connectToMQTT();
   }
-
+  /*
   unsigned long currentTime = millis();
   if (currentTime - lastNotifyTime >= notifyInterval) {
-    light.notify();
-    roll.notify();
-    camera.notify();
+    //light->notify();
+    //roll->notify();
+    //camera->notify();
     lastNotifyTime = currentTime;
-  }
+  }*/
 }

@@ -1,14 +1,15 @@
+#include "WString.h"
 #include "MqttManager.h"
 #include "Arduino.h"
 
 MqttManager::MqttManager(Adafruit_MQTT_Client* client) : mqttClient(client) {
 }
 
-void MqttManager::addPublisher(const char* topic, Adafruit_MQTT_Publish* publisher) {
+void MqttManager::addPublisher(String topic, Adafruit_MQTT_Publish* publisher) {
     topicPublishers[topic] = publisher;
 }
 
-void MqttManager::getTopic(EventSourceType sourceType) {
+String MqttManager::getTopic(EventSourceType sourceType) {
     switch (sourceType) {
         case ROLL:
             return "room1/roll";
@@ -22,19 +23,19 @@ void MqttManager::getTopic(EventSourceType sourceType) {
 }
 
 void MqttManager::update(Event<String>* e) {
-    const char* topic = getTopic(e->getSourceType());
+    String topic = getTopic(e->getSrcType());
     if (topicPublishers.find(topic) != topicPublishers.end()) {
-        publishMessage(topic, e->getEventArgs().c_str());
+        publishMessage(topic, e->getEventArgs()->c_str());
     } else {
         Serial.println("Publisher not found for the topic");
     }
 }
 
-void MqttManager::publishMessage(const char* topic, const char* message) {
+void MqttManager::publishMessage(String topic, String message) {
     if (mqttClient->connected()) {
         if (topicPublishers.find(topic) != topicPublishers.end()) {
             Adafruit_MQTT_Publish* publisher = topicPublishers[topic];
-            if (publisher->publish(message)) {
+            if (publisher->publish(message.c_str())) {
                 Serial.print("Published ");
                 Serial.print(topic);
                 Serial.println(" value");

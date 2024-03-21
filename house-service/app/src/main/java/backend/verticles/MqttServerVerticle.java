@@ -1,6 +1,7 @@
 package backend.verticles;
 
 import io.vertx.core.AbstractVerticle;
+import io.vertx.core.net.PemKeyCertOptions;
 import io.vertx.mqtt.MqttEndpoint;
 import io.vertx.mqtt.MqttServer;
 import io.vertx.mqtt.MqttServerOptions;
@@ -10,7 +11,7 @@ public class MqttServerVerticle extends AbstractVerticle {
     @Override
     public void start() {
         MqttServerOptions mqttOptions = new MqttServerOptions()
-                .setHost("localhost")
+                .setHost("192.168.1.64")
                 .setPort(1883);
 
         MqttServer mqttServer = MqttServer.create(vertx, mqttOptions);
@@ -27,17 +28,20 @@ public class MqttServerVerticle extends AbstractVerticle {
                 log("MQTT server started on port " + ar.result().actualPort());
             } else {
                 log("MQTT server error " + ar.cause().getMessage());
+                ar.cause().printStackTrace(); // Log the stack trace
             }
         });
     }
 
     private void handleWebToMqttMessage(String payload) {
-        vertx.eventBus().publish("mqttserver.to.mqttclient", payload);
+        vertx.eventBus().publish("mqttserver.to.mqttclient", payload); // Changed the address here
     }
+    
 
     private void handleEndpoint(MqttEndpoint endpoint) {
         log("connected client " + endpoint.clientIdentifier());
         endpoint.publishHandler(message -> {
+            System.out.println("Just received message on [" + message.topicName() + "] payload [" + message.payload() + "] with QoS [" + message.qosLevel() + "]");
             String mqttPayload = message.payload().toString();
             vertx.eventBus().publish("mqttserver.to.webserver", mqttPayload);
         });

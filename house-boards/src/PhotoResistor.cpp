@@ -14,9 +14,8 @@ int PhotoResistor::isDark()
 void PhotoResistor::notify()
 {
   Event<int> *e = new Event<int>(EventSourceType::PHOTO_RESISTOR, new int(this->isDark()));
-  for (auto observer : this->observers)
-  {
-    observer->update(e);
+  for (int i = 0; i < this->getNObservers(); i++) {
+    this->getObservers()[i]->update(e);
   }
   delete e;
 }

@@ -1,6 +1,7 @@
 #include "Pir.h"
 
-Pir::Pir(int pir_pin) : pir_pin(pir_pin), led_pin(led_pin) {
+Pir::Pir(int pir_pin) {
+  this->pir_pin = pir_pin;
   pinMode(pir_pin, INPUT);
   for (int i = 0; i < 5; i++) {
     delay(1000);
@@ -8,15 +9,13 @@ Pir::Pir(int pir_pin) : pir_pin(pir_pin), led_pin(led_pin) {
 }
 
 int Pir::getMotion() {
-  int motion = digitalRead(this->pir_pin) == HIGH ? 1 : 0;
-  analogWrite(this->led_pin, motion * 255);
-  return motion;
+  return digitalRead(this->pir_pin) == HIGH ? 1 : 0;
 };
 
 void Pir::notify() {
   Event<int> *e = new Event<int>(EventSourceType::PIR, new int(this->getMotion()));
-  for (auto observer : this->observers) {
-    observer->update(e);
+  for (int i = 0; i < this->getNObservers(); i++) {
+    this->getObservers()[i]->update(e);
   }
   delete e;
 }

@@ -57,14 +57,14 @@ Camera::Camera() : JSONSensor("camera") {
   }
 
   // Inizializza la fotocamera con la configurazione
-  esp_err_t err = esp_camera_init(&config);
+  esp_err_t err = esp_camera_init(&camera_config);
   if (err != ESP_OK) {
     Serial.printf("Camera init failed with error 0x%x", err);
     ESP.restart();
   }
 }
 
-String CameraModule::captureAndEncodeImage() {
+String Camera::captureAndEncodeImage() {
   camera_fb_t *fb = esp_camera_fb_get();  
   if (!fb) {
     Serial.println("Camera capture failed");
@@ -84,10 +84,10 @@ String CameraModule::captureAndEncodeImage() {
   return imageFile;
 }
 
-void CameraModule::notify() {
+void Camera::notify() {
     Event<String> *event = new Event<String>(EventSourceType::CAMERA, new String(this->getJson(captureAndEncodeImage())));
-    for(auto observer : this->observers) {
-        observer->update(event);
-    }
+    for (int i = 0; i < this->getNObservers(); i++) {
+    this->getObservers()[i]->update(event);
+  }
     delete event;
 }
