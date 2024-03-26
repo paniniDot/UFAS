@@ -13,11 +13,13 @@ import time
 
 import mqttools
 
-BROKER_PORT = 10008
+BROKER_PORT = 1883
+
+BROKER_IP = '192.168.1.64'
 
 
 async def start_client():
-    client = mqttools.Client('localhost', BROKER_PORT, connect_delays=[0.1])
+    client = mqttools.Client(BROKER_IP, BROKER_PORT, connect_delays=[0.1])
     await client.start()
 
     return client
@@ -73,7 +75,7 @@ async def broker_main():
 
     """
 
-    broker = mqttools.Broker(('localhost', BROKER_PORT))
+    broker = mqttools.Broker((BROKER_IP, BROKER_PORT))
     await broker.serve_forever()
 
 
