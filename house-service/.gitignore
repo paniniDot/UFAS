@@ -1,91 +1,41 @@
-# Prerequisites
-*.d
+# Created by https://www.gitignore.io/api/ava,gradle
 
-# Compiled Object files
-*.slo
-*.lo
-*.o
-*.obj
+#!! ERROR: ava is undefined. Use list command to see defined gitignore types !!#
 
-# Precompiled Headers
-*.gch
-*.pch
+### Gradle ###
+.gradle
+build/
 
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
+# Ignore Gradle GUI config
+gradle-app.setting
 
-# Fortran module files
-*.mod
-*.smod
+# Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
+!gradle-wrapper.jar
 
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-*.lib
-
-# Executables
-*.exe
-*.out
-*.app
-
-# General
-.DS_Store
-.AppleDouble
-.LSOverride
-
-# Icon must end with two \r
-Icon
-
-# Thumbnails
-._*
-
-# Files that might appear in the root of a volume
-.DocumentRevisions-V100
-.fseventsd
-.Spotlight-V100
-.TemporaryItems
-.Trashes
-.VolumeIcon.icns
-.com.apple.timemachine.donotpresent
-
-# Directories potentially created on remote AFP share
-.AppleDB
-.AppleDesktop
-Network Trash Folder
-Temporary Items
-.apdisk
-
-# Compiled class file
-*.class
-
-# Log file
-*.log
-
-# BlueJ files
-*.ctxt
-
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
-
-# Package Files #
+*target*
 *.jar
 *.war
-*.nar
 *.ear
-*.zip
-*.tar.gz
-*.rar
+*.class
 
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
-hs_err_pid*
-replay_pid*
+# eclipse specific git ignore
+*.pydevproject
+.project
+.metadata
+bin/**
+tmp/**
+tmp/**/*
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.classpath
+.settings/
+.loadpath
 
-*.gradle*
-*.settings*
+# External tool builders
+.externalToolBuilders/
 
-.gradle
-**/build/
-!src/**/build/
+# Locally stored "Eclipse launch configurations"
+*.launch

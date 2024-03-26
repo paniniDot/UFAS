@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="room.service.AppTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2023-03-03T22:13:38" hostname="DESKTOP-P1RO4VI" time="0.016">
-  <properties/>
-  <testcase name="appHasAGreeting()" classname="room.service.AppTest" time="0.016"/>
-  <system-out><![CDATA[]]></system-out>
-  <system-err><![CDATA[]]></system-err>
-</testsuite>
