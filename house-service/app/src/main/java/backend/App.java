@@ -4,7 +4,6 @@ import io.vertx.core.Vertx;
 import backend.verticles.MqttClientVerticle;
 
 import backend.verticles.MqttServerVerticle;
-import backend.verticles.WebSocketServerVerticle;
 
 public class App {
 
@@ -13,7 +12,7 @@ public class App {
 
         vertx.deployVerticle(new MqttServerVerticle());
         //vertx.deployVerticle(new WebSocketServerVerticle());
-        //Thread.sleep(3000);
-        //vertx.deployVerticle(new MqttClientVerticle());
+        Thread.sleep(3000);
+        vertx.deployVerticle(new MqttClientVerticle());
     }
 }
