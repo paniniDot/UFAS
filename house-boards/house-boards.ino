@@ -38,6 +38,7 @@ Adafruit_MQTT_Client mqttClient(&espClient, mqtt_server, mqtt_port);
 Adafruit_MQTT_Publish publisher_light(&mqttClient, topic_light);
 Adafruit_MQTT_Publish publisher_roll(&mqttClient, topic_roll);
 Adafruit_MQTT_Publish publisher_cam(&mqttClient, topic_cam);
+Adafruit_MQTT_Subscribe subscribe_mqtt_server(&mqttClient, topic_receive);
 
 // MqttManager and Hardware Objects
 MqttManager* mqttManager;
@@ -47,6 +48,7 @@ Pir* pir;
 Light* light;
 Roll* roll;
 //Camera* camera;
+
 void connectToWIFI() {
   delay(100);
   Serial.print("Connecting to ");
@@ -70,10 +72,12 @@ void connectToMQTT() {
   Serial.println("connected");
 }
 
-void messageReceived(char* message, uint16_t len) {
+void messageReceived(char* topic, byte* payload, unsigned int length) {
   Serial.print("Message received on topic '");
-  for (int i = 0; i < len; i++) {
-    Serial.print((char)message[i]);
+  Serial.print(topic);
+  Serial.print("': ");
+  for (int i = 0; i < length; i++) {
+    Serial.print((char)payload[i]);
   }
   Serial.println();
 }
@@ -98,9 +102,9 @@ void setup() {
   resistor->attach(roll);
   light->attach(mqttManager);
   roll->attach(mqttManager);
-
+*/
   subscribe_mqtt_server.setCallback(messageReceived);
-  mqttClient.subscribe(&subscribe_mqtt_server);*/
+  mqttClient.subscribe(&subscribe_mqtt_server);
 }
 
 void loop() {
