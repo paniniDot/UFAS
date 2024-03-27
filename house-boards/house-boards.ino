@@ -38,7 +38,7 @@ Adafruit_MQTT_Client mqttClient(&espClient, mqtt_server, mqtt_port);
 Adafruit_MQTT_Publish publisher_light(&mqttClient, topic_light);
 Adafruit_MQTT_Publish publisher_roll(&mqttClient, topic_roll);
 Adafruit_MQTT_Publish publisher_cam(&mqttClient, topic_cam);
-Adafruit_MQTT_Subscribe subscribe_mqtt_server(&mqttClient, topic_receive);
+Adafruit_MQTT_Subscribe subscribe_mqtt_server = Adafruit_MQTT_Subscribe(&mqttClient, topic_receive, MQTT_QOS_0);
 
 // MqttManager and Hardware Objects
 MqttManager* mqttManager;
@@ -72,12 +72,10 @@ void connectToMQTT() {
   Serial.println("connected");
 }
 
-void messageReceived(char* topic, byte* payload, unsigned int length) {
-  Serial.print("Message received on topic '");
-  Serial.print(topic);
-  Serial.print("': ");
-  for (int i = 0; i < length; i++) {
-    Serial.print((char)payload[i]);
+void incomingmessagecallback(char *data, uint16_t len) {
+  Serial.print("Message received from server ");
+  for (int i = 0; i < len; i++) {
+    Serial.print((char)data[i]);
   }
   Serial.println();
 }
@@ -103,7 +101,7 @@ void setup() {
   light->attach(mqttManager);
   roll->attach(mqttManager);
 */
-  subscribe_mqtt_server.setCallback(messageReceived);
+  subscribe_mqtt_server.setCallback(incomingmessagecallback);
   mqttClient.subscribe(&subscribe_mqtt_server);
 }
 
@@ -116,6 +114,7 @@ void loop() {
     Serial.println("MQTT server connection lost");
     connectToMQTT();
   }
+  mqttClient.processPackets(10000);
   /*
   unsigned long currentTime = millis();
   if (currentTime - lastNotifyTime >= notifyInterval) {

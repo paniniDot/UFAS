@@ -60,6 +60,7 @@ public class WebSocketServerVerticle extends AbstractVerticle {
     private void handleIncomingWebClientMessage() {
         vertx.eventBus().consumer("webclient.to.webserver", message -> {
             String webMessage = message.body().toString();
+            log("Received message from web client: " + webMessage);
             vertx.eventBus().publish("webserver.to.mqttserver", webMessage);
         });
     }

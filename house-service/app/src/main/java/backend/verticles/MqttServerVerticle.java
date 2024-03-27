@@ -1,11 +1,17 @@
 package backend.verticles;
 
+import io.netty.handler.codec.mqtt.MqttQoS;
 import io.vertx.core.AbstractVerticle;
+import io.vertx.core.buffer.Buffer;
 import io.vertx.mqtt.MqttEndpoint;
 import io.vertx.mqtt.MqttServer;
 import io.vertx.mqtt.MqttServerOptions;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MqttServerVerticle extends AbstractVerticle {
+
+    private List<MqttEndpoint> endpoints = new ArrayList<>();
 
     @Override
     public void start() {
@@ -17,6 +23,7 @@ public class MqttServerVerticle extends AbstractVerticle {
 
         vertx.eventBus().consumer("webserver.to.mqttserver", message -> {
             String payload = message.body().toString();
+            log("Received message from web server: " + payload);
             handleWebToMqttMessage(payload);
         });
 
@@ -31,8 +38,13 @@ public class MqttServerVerticle extends AbstractVerticle {
     }
 
     private void handleWebToMqttMessage(String payload) {
-        vertx.eventBus().publish("mqttserver.to.mqttclient", payload); // Changed the address here
+        if (!endpoints.isEmpty()) {
+            for (MqttEndpoint endpoint : endpoints) {
+                endpoint.publish("mqttserver.to.mqttclient", Buffer.buffer(payload.getBytes()), MqttQoS.AT_LEAST_ONCE, false, false);
+            }
+        }
     }
+    
     
 
     private void handleEndpoint(MqttEndpoint endpoint) {
@@ -43,6 +55,7 @@ public class MqttServerVerticle extends AbstractVerticle {
             vertx.eventBus().publish("mqttserver.to.webserver", mqttPayload);
         });
         endpoint.accept(false);
+        endpoints.add(endpoint);
     }
 
     private void log(String message) {
