@@ -3,7 +3,6 @@ package backend.verticles;
 import io.netty.handler.codec.mqtt.MqttQoS;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.mqtt.MqttClient;
-import io.vertx.mqtt.MqttClientOptions;
 import io.vertx.core.buffer.Buffer;
 
 public class MqttClientVerticle extends AbstractVerticle {
