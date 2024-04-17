@@ -19,7 +19,7 @@ const char* ssid = "Fast$wag";
 const char* password = "SwAg2k24";
 
 // MQTT Configuration
-const char* mqtt_server = "192.168.1.64";
+const char* mqtt_server = "192.168.1.52";
 const int mqtt_port = 1883;
 
 // MQTT Topics
@@ -88,7 +88,7 @@ void setup() {
   mqttManager->addPublisher(topic_light, &publisher_light);
   mqttManager->addPublisher(topic_roll, &publisher_roll);
   mqttManager->addPublisher(topic_cam, &publisher_cam);
-  /*
+  
   pir = new Pir(PIR_PIN);
   resistor = new PhotoResistor(PHOTO_RESISTOR_PIN);
   light = new Light(LIGHT_PIN);
@@ -100,7 +100,7 @@ void setup() {
   resistor->attach(roll);
   light->attach(mqttManager);
   roll->attach(mqttManager);
-*/
+
   subscribe_mqtt_server.setCallback(incomingmessagecallback);
   mqttClient.subscribe(&subscribe_mqtt_server);
 }
@@ -115,12 +115,12 @@ void loop() {
     connectToMQTT();
   }
   mqttClient.processPackets(10000);
-  /*
+
   unsigned long currentTime = millis();
   if (currentTime - lastNotifyTime >= notifyInterval) {
-    //light->notify();
-    //roll->notify();
+    light->notify();
+    roll->notify();
     //camera->notify();
     lastNotifyTime = currentTime;
-  }*/
+  }
 }
