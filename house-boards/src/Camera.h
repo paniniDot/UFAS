@@ -15,6 +15,7 @@ class Camera : public JSONSensor<String>, public Subject<String>
 private:
     String captureAndEncodeImage();
 
+
 public:
     Camera();   
     void notify();
