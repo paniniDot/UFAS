@@ -1,6 +1,6 @@
 #include <WiFi.h>
-#include <Adafruit_MQTT.h>
-#include "Adafruit_MQTT_Client.h"
+#include "src/Adafruit_MQTT.h"
+#include "src/Adafruit_MQTT_Client.h"
 #include "src/Pir.h"
 #include "src/PhotoResistor.h"
 #include "src/Light.h"
@@ -47,7 +47,7 @@ PhotoResistor* resistor;
 Pir* pir;
 Light* light;
 Roll* roll;
-//Camera* camera;
+Camera* camera;
 
 void connectToWIFI() {
   delay(100);
@@ -93,13 +93,14 @@ void setup() {
   resistor = new PhotoResistor(PHOTO_RESISTOR_PIN);
   light = new Light(LIGHT_PIN);
   roll = new Roll(ROLL_PIN);
-  //camera = new Camera();
+  camera = new Camera();
   pir->attach(light);
   pir->attach(roll);
   resistor->attach(light);
   resistor->attach(roll);
   light->attach(mqttManager);
   roll->attach(mqttManager);
+  camera->attach(mqttManager);
 
   subscribe_mqtt_server.setCallback(incomingmessagecallback);
   mqttClient.subscribe(&subscribe_mqtt_server);
@@ -118,9 +119,9 @@ void loop() {
 
   unsigned long currentTime = millis();
   if (currentTime - lastNotifyTime >= notifyInterval) {
-    light->notify();
-    roll->notify();
-    //camera->notify();
+    //light->notify();
+    //roll->notify();
+    camera->notify();
     lastNotifyTime = currentTime;
   }
 }

@@ -17,7 +17,9 @@ public class MqttServerVerticle extends AbstractVerticle {
     public void start() {
         MqttServerOptions mqttOptions = new MqttServerOptions()
                 .setHost("192.168.1.52")
-                .setPort(1883);
+                .setPort(1883)
+                .setMaxMessageSize(Integer.MAX_VALUE)
+                .setReceiveBufferSize(Integer.MAX_VALUE);
 
         MqttServer mqttServer = MqttServer.create(vertx, mqttOptions);
 
@@ -45,8 +47,6 @@ public class MqttServerVerticle extends AbstractVerticle {
         }
     }
     
-    
-
     private void handleEndpoint(MqttEndpoint endpoint) {
         log("connected client " + endpoint.clientIdentifier());
         endpoint.publishHandler(message -> {

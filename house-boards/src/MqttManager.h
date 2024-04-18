@@ -1,7 +1,7 @@
 #ifndef __MQTT_MANAGER_H__
 #define __MQTT_MANAGER_H__
 
-#include <Adafruit_MQTT.h>
+#include "Adafruit_MQTT.h"
 #include "Adafruit_MQTT_Client.h"
 #include "observer/Observer.h"
 #include "observer/EventSourceType.h"
