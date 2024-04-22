@@ -1,6 +1,5 @@
 #include <WiFi.h>
-#include "src/Adafruit_MQTT.h"
-#include "src/Adafruit_MQTT_Client.h"
+#include <PubSubClient.h>
 #include "src/Pir.h"
 #include "src/PhotoResistor.h"
 #include "src/Light.h"
@@ -8,6 +7,7 @@
 #include "src/MqttManager.h"
 #include "src/Camera.h"
 
+#define BUFFER_SIZE 2048
 // Pin Definitions
 #define PIR_PIN 25
 #define PHOTO_RESISTOR_PIN 27
@@ -19,7 +19,7 @@ const char* ssid = "Fast$wag";
 const char* password = "SwAg2k24";
 
 // MQTT Configuration
-const char* mqtt_server = "192.168.1.52";
+const char* mqtt_server = "192.168.1.51";
 const int mqtt_port = 1883;
 
 // MQTT Topics
@@ -32,13 +32,9 @@ const char* topic_receive = "mqttserver.to.mqttclient";
 unsigned long lastNotifyTime = 0;
 const unsigned long notifyInterval = 1000;
 
-// MQTT Client and Publishers
+// WiFi Client
 WiFiClient espClient;
-Adafruit_MQTT_Client mqttClient(&espClient, mqtt_server, mqtt_port);
-Adafruit_MQTT_Publish publisher_light(&mqttClient, topic_light);
-Adafruit_MQTT_Publish publisher_roll(&mqttClient, topic_roll);
-Adafruit_MQTT_Publish publisher_cam(&mqttClient, topic_cam);
-Adafruit_MQTT_Subscribe subscribe_mqtt_server = Adafruit_MQTT_Subscribe(&mqttClient, topic_receive, MQTT_QOS_0);
+PubSubClient mqttClient(espClient);
 
 // MqttManager and Hardware Objects
 MqttManager* mqttManager;
@@ -50,7 +46,6 @@ Roll* roll;
 Camera* camera;
 
 void connectToWIFI() {
-  delay(100);
   Serial.print("Connecting to ");
   Serial.println(ssid);
   WiFi.mode(WIFI_STA);
@@ -65,17 +60,18 @@ void connectToWIFI() {
 void connectToMQTT() {
   Serial.println("Connecting to MQTT server");
   while (!mqttClient.connected()) {
-    if (!mqttClient.connect()) {
+    if (!mqttClient.connect("room1")) {
       delay(500);
     }
   }
-  Serial.println("connected");
+  Serial.println("Connected to MQTT server");
+  mqttClient.subscribe(topic_receive);
 }
 
-void incomingmessagecallback(char *data, uint16_t len) {
-  Serial.print("Message received from server ");
-  for (int i = 0; i < len; i++) {
-    Serial.print((char)data[i]);
+void messageReceivedCallback(char* topic, byte* payload, unsigned int length) {
+  Serial.print("Message received from server: ");
+  for (int i = 0; i < length; i++) {
+    Serial.print((char)payload[i]);
   }
   Serial.println();
 }
@@ -83,12 +79,16 @@ void incomingmessagecallback(char *data, uint16_t len) {
 void setup() {
   Serial.begin(115200);
   connectToWIFI();
+  mqttClient.setServer(mqtt_server, mqtt_port);
+  mqttClient.setBufferSize(BUFFER_SIZE);
+  mqttClient.setCallback(messageReceivedCallback);
   connectToMQTT();
-  mqttManager = new MqttManager(&mqttClient);
-  mqttManager->addPublisher(topic_light, &publisher_light);
-  mqttManager->addPublisher(topic_roll, &publisher_roll);
-  mqttManager->addPublisher(topic_cam, &publisher_cam);
-  
+
+  mqttManager = new MqttManager(&mqttClient, BUFFER_SIZE);
+  mqttManager->addPublisher(topic_light, "room1/light");
+  mqttManager->addPublisher(topic_roll, "room1/roll");
+  mqttManager->addPublisher(topic_cam, "room1/cam");
+
   pir = new Pir(PIR_PIN);
   resistor = new PhotoResistor(PHOTO_RESISTOR_PIN);
   light = new Light(LIGHT_PIN);
@@ -101,21 +101,14 @@ void setup() {
   light->attach(mqttManager);
   roll->attach(mqttManager);
   camera->attach(mqttManager);
-
-  subscribe_mqtt_server.setCallback(incomingmessagecallback);
-  mqttClient.subscribe(&subscribe_mqtt_server);
 }
 
 void loop() {
-  if (WiFi.status() != WL_CONNECTED) {
-    Serial.println("WiFi connection lost. Reconnecting...");
-    connectToWIFI();
-  }
-  if (!mqttClient.ping()) {
-    Serial.println("MQTT server connection lost");
+  if (!mqttClient.connected()) {
+    Serial.println("MQTT server connection lost. Reconnecting...");
     connectToMQTT();
   }
-  mqttClient.processPackets(10000);
+  mqttClient.loop();
 
   unsigned long currentTime = millis();
   if (currentTime - lastNotifyTime >= notifyInterval) {

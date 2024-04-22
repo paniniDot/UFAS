@@ -9,6 +9,7 @@
 #include "observer/Event.h"
 #include "observer/EventSourceType.h"
 #include "JSONSensor.h" 
+#include "Base64.h"
 
 class Camera : public JSONSensor<String>, public Subject<String>
 {

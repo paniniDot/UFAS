@@ -16,7 +16,7 @@ public class MqttServerVerticle extends AbstractVerticle {
     @Override
     public void start() {
         MqttServerOptions mqttOptions = new MqttServerOptions()
-                .setHost("192.168.1.52")
+                .setHost("192.168.1.51")
                 .setPort(1883)
                 .setMaxMessageSize(Integer.MAX_VALUE)
                 .setReceiveBufferSize(Integer.MAX_VALUE);
@@ -49,6 +49,10 @@ public class MqttServerVerticle extends AbstractVerticle {
     
     private void handleEndpoint(MqttEndpoint endpoint) {
         log("connected client " + endpoint.clientIdentifier());
+        endpoint.closeHandler(v -> {
+            log("Client " + endpoint.clientIdentifier() + " disconnected");
+            endpoints.remove(endpoint);
+        });
         endpoint.publishHandler(message -> {
             System.out.println("Just received message on [" + message.topicName() + "] payload [" + message.payload() + "] with QoS [" + message.qosLevel() + "]");
             String mqttPayload = message.payload().toString();

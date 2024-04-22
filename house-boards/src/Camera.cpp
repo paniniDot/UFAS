@@ -23,8 +23,8 @@ static camera_config_t camera_config = {
   .ledc_timer = LEDC_TIMER_0,
   .ledc_channel = LEDC_CHANNEL_0,
   .pixel_format = PIXFORMAT_JPEG,
-  .frame_size = FRAMESIZE_VGA,
-  .jpeg_quality = 50,
+  .frame_size = FRAMESIZE_SVGA,
+  .jpeg_quality = 20,
   .fb_count = 2,
   .fb_location = CAMERA_FB_IN_PSRAM,
   .grab_mode = CAMERA_GRAB_LATEST
@@ -59,8 +59,8 @@ String Camera::captureAndEncodeImage() {
 }
 
 void Camera::notify() {
-    //Event<String> *event = new Event<String>(EventSourceType::CAMERA, new String(this->getJson(captureAndEncodeImage())));
-    Event<String> *event = new Event<String>(EventSourceType::CAMERA, new String("Camera event"));
+    Event<String> *event = new Event<String>(EventSourceType::CAMERA, new String(this->getJson(captureAndEncodeImage())));
+    //Event<String> *event = new Event<String>(EventSourceType::CAMERA, new String("Camera event"));
     Serial.println("Camera notify " + *event->getEventArgs());
     for (int i = 0; i < this->getNObservers(); i++) {
     this->getObservers()[i]->update(event);
