@@ -39,9 +39,12 @@ config = {
 broker = Broker(config)
 
 
-async def test_coro():
-    await broker.start()
+async def on_message_received(client_id, topic, payload, qos, properties):
+    logger.info(f"Received message on topic '{topic}': {payload.decode()}")
 
+async def test_coro():
+    broker.register_callback(on_message_received)
+    await broker.start()
 
 if __name__ == "__main__":
     formatter = "[%(asctime)s] :: %(levelname)s :: %(name)s :: %(message)s"
