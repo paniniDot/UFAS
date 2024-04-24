@@ -1,55 +1,46 @@
+import threading
+import asyncio
 import configparser
 import paho.mqtt.client as mqtt
-import asyncio
-import websockets
 from websockets.server import serve
 
-class Bridge():
+connected = set()
 
-    def __init__(self):
-        self.config = configparser.ConfigParser()
-        self.config.read('config.ini')
+async def ws_handler(websocket, path):
+        print("Websocket connection established")
+        connected.add(websocket)
 
-        self.pubtopic = self.config.get("MQTT","PubTopic", fallback= "room1/cam")
-        self.connected = set()
+async def send_message(message):
+    for websocket in connected:
+        await websocket.send(message)
 
-    async def setupWS(self):
-        self.serverWS = await serve(self.ws_handler, "localhost", 8080)
-        print("Websocket server started on localhost:8080")
+async def setupWS():
+    print("Setting up websocket server")
+    async with serve(ws_handler, "localhost", 8080):
+        await asyncio.Future()  # run forever
 
-    async def ws_handler(self, websocket):
-        self.connected.add(websocket)
+def on_message(client, userdata, msg):
+	print("Received message from MQTT")
+	message = msg.payload.decode()
+	asyncio.run(send_message(message))
 
-    def setupMQTT(self):
-        self.clientMQTT = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
-        self.clientMQTT.on_connect = self.on_connect
-        self.clientMQTT.on_message = self.on_message
-        print("Connecting to MQTT broker...")
-        self.clientMQTT.connect(
-            self.config.get("MQTT","Server", fallback= "192.168.1.51"),
-            self.config.getint("MQTT","Port", fallback= 1883),
-            60)
+def mqtt_listener():
+    try:
+        # Connect to MQTT broker
+        client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)  # Utilizziamo la versione 3.1.1 del protocollo MQTT
+        client.connect("localhost", 1883)
+        client.subscribe("room1/cam")
 
-        self.clientMQTT.loop_start()
+        # Define callback function for received messages
+        client.on_message = on_message
 
-    def on_connect(self, client, userdata, flags, reason_code, properties):
-        print("Connected with result code " + str(reason_code))
-        t = self.config.get("MQTT","SubTopic", fallback= "room1/cam")
-        self.clientMQTT.subscribe(t)
-        print("Subscribed to " + t)
-
-    def on_message(self, client, userdata, msg):
-        print("Received message from MQTT")
-        print(self.connected)
-        for ws in self.connected:
-            ws.send(msg.payload.decode())
-
-async def main():
-    br = Bridge()
-    await br.setupWS()
-    br.setupMQTT()
-    while True:
-        await asyncio.sleep(1)
+        # Start MQTT client loop
+        print("Starting MQTT listener")
+        client.loop_forever()
+    except Exception as e:
+        print("Error in MQTT listener:", e)
 
 if __name__ == '__main__':
-    asyncio.run(main())
+    mqtt_thread = threading.Thread(target=mqtt_listener)
+    mqtt_thread.start()
+    asyncio.run(setupWS())
