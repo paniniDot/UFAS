@@ -14,7 +14,7 @@ fast_mqtt = FastMQTT(config=mqtt_config)
 
 fast_mqtt.init_app(app)
 
-messages = []
+manager = ConnectionManager()
 
 @fast_mqtt.on_connect()
 def connect(client, flags, rc, properties):
@@ -27,17 +27,18 @@ def disconnect(client, packet, exc=None):
 @fast_mqtt.subscribe("room1/cam")
 async def cam_handler(client, topic, payload, qos, properties):
     print("Received message on topic: ", topic)
-    messages.append(payload.decode())
+    await manager.broadcast(payload.decode())
 
 @fast_mqtt.subscribe("room1/roll")
 async def measure_handler(client, topic, payload, qos, properties):
     print("Received message on topic: ", topic)
-    messages.append(payload.decode())
+    await manager.broadcast(payload.decode())
 
 @fast_mqtt.subscribe("room1/light")
 async def light_handler(client, topic, payload, qos, properties):
     print("Received message on topic: ", topic)
-    messages.append(payload.decode())
+    await manager.broadcast(payload.decode())
+
 
 html = """
 <!DOCTYPE html>
@@ -81,8 +82,6 @@ html = """
 
 """
 
-manager = ConnectionManager()
-
 @app.get("/")
 async def root():
     return HTMLResponse(html)
@@ -94,14 +93,8 @@ async def websocket_endpoint(websocket: WebSocket):
         while True:
             data = await websocket.receive_text()
             print(f"Message received: {data}")
-            if messages:
-                message = messages.pop(0)
-                await manager.send_personal_message(message, websocket)
-            else:
-                print("No messages available")
     except WebSocketDisconnect:
         manager.disconnect(websocket)
-
 
 if __name__ == "__main__":
     uvicorn.run(app, host="192.168.1.67", port=8080)
