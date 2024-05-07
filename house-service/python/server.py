@@ -62,9 +62,11 @@ html = """
                 // Parse message JSON
                 var message = JSON.parse(event.data);
                 // Get the base64 encoded image data
-                var imageData = message.measure;
-                // Update the image src with the new data
-                document.getElementById("image").src = imageData;
+                if (message.name === "camera") {
+                    var imageData = message.measure;
+                    // Update the image src with the new data
+                    document.getElementById("image").src = imageData;            
+                }
             };
             ws.onerror = function(event) {
                 console.error("WebSocket error:", event);
