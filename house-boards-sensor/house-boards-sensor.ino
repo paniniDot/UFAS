@@ -22,8 +22,8 @@ const char* mqtt_server = "192.168.1.67";
 const int mqtt_port = 1883;
 
 // MQTT Topics
-const char* topic_light = "room2/light";
-const char* topic_roll = "room2/roll";
+const char* topic_light = "room1/light";
+const char* topic_roll = "room1/roll";
 const char* topic_receive = "mqttserver.to.mqttclient";
 
 // Notification Configuration
@@ -57,7 +57,7 @@ void connectToWIFI() {
 void connectToMQTT() {
   Serial.println("Connecting to MQTT server");
   while (!mqttClient.connected()) {
-    if (!mqttClient.connect("room1")) {
+    if (!mqttClient.connect("room2")) {
       delay(500);
     }
   }
