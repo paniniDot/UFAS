@@ -8,7 +8,7 @@ from connectionmanager import ConnectionManager
 
 app = FastAPI()
 
-mqtt_config = MQTTConfig(host="localhost", port=1883)
+mqtt_config = MQTTConfig(host="192.168.1.67", port=1883)
 
 fast_mqtt = FastMQTT(config=mqtt_config)
 
@@ -29,6 +29,16 @@ async def cam_handler(client, topic, payload, qos, properties):
     print("Received message on topic: ", topic)
     messages.append(payload.decode())
 
+@fast_mqtt.subscribe("room1/roll")
+async def measure_handler(client, topic, payload, qos, properties):
+    print("Received message on topic: ", topic)
+    messages.append(payload.decode())
+
+@fast_mqtt.subscribe("room1/light")
+async def light_handler(client, topic, payload, qos, properties):
+    print("Received message on topic: ", topic)
+    messages.append(payload.decode())
+
 html = """
 <!DOCTYPE html>
 <html>
@@ -42,7 +52,7 @@ html = """
     
     <script>
         document.addEventListener("DOMContentLoaded", function(event) {
-            var ws = new WebSocket("ws://localhost:8080/ws");
+            var ws = new WebSocket("ws://192.168.1.67:8080/ws");
             ws.onopen = function(event) {
                 console.log("WebSocket connection established.");
             };
@@ -94,4 +104,4 @@ async def websocket_endpoint(websocket: WebSocket):
 
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="localhost", port=8080)
+    uvicorn.run(app, host="192.168.1.67", port=8080)

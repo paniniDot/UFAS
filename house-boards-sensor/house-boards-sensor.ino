@@ -5,7 +5,6 @@
 #include "src/Light.h"
 #include "src/Roll.h"
 #include "src/MqttManager.h"
-#include "src/Camera.h"
 
 #define BUFFER_SIZE 2048
 // Pin Definitions
@@ -19,13 +18,12 @@ const char* ssid = "Fast$wag";
 const char* password = "SwAg2k24";
 
 // MQTT Configuration
-const char* mqtt_server = "192.168.1.51";
+const char* mqtt_server = "192.168.1.67";
 const int mqtt_port = 1883;
 
 // MQTT Topics
-const char* topic_light = "room1/light";
-const char* topic_roll = "room1/roll";
-const char* topic_cam = "room1/cam";
+const char* topic_light = "room2/light";
+const char* topic_roll = "room2/roll";
 const char* topic_receive = "mqttserver.to.mqttclient";
 
 // Notification Configuration
@@ -43,7 +41,6 @@ PhotoResistor* resistor;
 Pir* pir;
 Light* light;
 Roll* roll;
-Camera* camera;
 
 void connectToWIFI() {
   Serial.print("Connecting to ");
@@ -77,7 +74,7 @@ void messageReceivedCallback(char* topic, byte* payload, unsigned int length) {
 }
 
 void setup() {
-  Serial.begin(115200);
+  Serial.begin(19200);
   connectToWIFI();
   mqttClient.setServer(mqtt_server, mqtt_port);
   mqttClient.setBufferSize(BUFFER_SIZE);
@@ -87,20 +84,17 @@ void setup() {
   mqttManager = new MqttManager(&mqttClient, BUFFER_SIZE);
   mqttManager->addPublisher(topic_light, "room1/light");
   mqttManager->addPublisher(topic_roll, "room1/roll");
-  mqttManager->addPublisher(topic_cam, "room1/cam");
 
   pir = new Pir(PIR_PIN);
   resistor = new PhotoResistor(PHOTO_RESISTOR_PIN);
   light = new Light(LIGHT_PIN);
   roll = new Roll(ROLL_PIN);
-  camera = new Camera();
   pir->attach(light);
   pir->attach(roll);
   resistor->attach(light);
   resistor->attach(roll);
   light->attach(mqttManager);
   roll->attach(mqttManager);
-  camera->attach(mqttManager);
 }
 
 void loop() {
@@ -112,9 +106,8 @@ void loop() {
 
   unsigned long currentTime = millis();
   if (currentTime - lastNotifyTime >= notifyInterval) {
-    //light->notify();
-    //roll->notify();
-    camera->notify();
+    light->notify();
+    roll->notify();
     lastNotifyTime = currentTime;
   }
 }
