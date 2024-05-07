@@ -84,7 +84,7 @@ async def websocket_endpoint(websocket: WebSocket):
             message = messages.pop(0)
             await websocket.send_text(message)
         else:
-            await asyncio.sleep(0.01)
+            print("No messages available")
 
 
 if __name__ == "__main__":
