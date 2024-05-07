@@ -61,7 +61,7 @@ String Camera::captureAndEncodeImage() {
 void Camera::notify() {
     Event<String> *event = new Event<String>(EventSourceType::CAMERA, new String(this->getJson(captureAndEncodeImage())));
     //Event<String> *event = new Event<String>(EventSourceType::CAMERA, new String("Camera event"));
-    Serial.println("Camera notify " + *event->getEventArgs());
+    //Serial.println("Camera notify " + *event->getEventArgs());
     for (int i = 0; i < this->getNObservers(); i++) {
     this->getObservers()[i]->update(event);
   }

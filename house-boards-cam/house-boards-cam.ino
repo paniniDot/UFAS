@@ -19,7 +19,7 @@ const char* topic_receive = "mqttserver.to.mqttclient";
 
 // Notification Configuration
 unsigned long lastNotifyTime = 0;
-const unsigned long notifyInterval = 1000;
+const unsigned long notifyInterval = 100;
 
 // WiFi Client
 WiFiClient espClient;

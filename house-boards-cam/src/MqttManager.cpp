@@ -51,7 +51,7 @@ void MqttManager::publishMessage(String topic, String message) {
                 }
             }
             mqttClient->endPublish();
-            Serial.println("Message published to " + publisher);
+            //Serial.println("Message published to " + publisher);
         }
     } else {
         Serial.println("MQTT client not connected");

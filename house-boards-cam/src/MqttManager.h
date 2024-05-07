@@ -5,8 +5,6 @@
 #include <PubSubClient.h>
 #include "observer/Observer.h"
 #include "observer/EventSourceType.h"
-#include "Light.h"
-#include "Roll.h"
 #include <map>
 
 class MqttManager : public Observer<String> {
