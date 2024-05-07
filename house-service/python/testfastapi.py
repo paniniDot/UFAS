@@ -1,9 +1,10 @@
-from fastapi import FastAPI, WebSocket
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.responses import HTMLResponse
 from fastapi_mqtt.fastmqtt import FastMQTT
 from fastapi_mqtt.config import MQTTConfig
 import asyncio
 import uvicorn
+from connectionmanager import ConnectionManager
 
 app = FastAPI()
 
@@ -70,21 +71,26 @@ html = """
 
 """
 
+manager = ConnectionManager()
+
 @app.get("/")
 async def root():
     return HTMLResponse(html)
 
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
-    await websocket.accept()
-    while True:
-        data = await websocket.receive_text()
-        print(f"Message received: {data}")
-        if messages:
-            message = messages.pop(0)
-            await websocket.send_text(message)
-        else:
-            print("No messages available")
+    await manager.connect(websocket)
+    try:
+        while True:
+            data = await websocket.receive_text()
+            print(f"Message received: {data}")
+            if messages:
+                message = messages.pop(0)
+                await manager.send_personal_message(message, websocket)
+            else:
+                print("No messages available")
+    except WebSocketDisconnect:
+        manager.disconnect(websocket)
 
 
 if __name__ == "__main__":
