@@ -1,36 +1,25 @@
 #include <WiFi.h>
 #include <PubSubClient.h>
-#include "src/Pir.h"
-#include "src/PhotoResistor.h"
-#include "src/Light.h"
-#include "src/Roll.h"
 #include "src/MqttManager.h"
 #include "src/Camera.h"
 
 #define BUFFER_SIZE 2048
-// Pin Definitions
-#define PIR_PIN 25
-#define PHOTO_RESISTOR_PIN 27
-#define LIGHT_PIN 32  // tbd
-#define ROLL_PIN 33   // tbd
 
 // WiFi Configuration
 const char* ssid = "Fast$wag";
 const char* password = "SwAg2k24";
 
 // MQTT Configuration
-const char* mqtt_server = "192.168.1.51";
+const char* mqtt_server = "192.168.1.67";
 const int mqtt_port = 1883;
 
 // MQTT Topics
-const char* topic_light = "room1/light";
-const char* topic_roll = "room1/roll";
 const char* topic_cam = "room1/cam";
 const char* topic_receive = "mqttserver.to.mqttclient";
 
 // Notification Configuration
 unsigned long lastNotifyTime = 0;
-const unsigned long notifyInterval = 1000;
+const unsigned long notifyInterval = 100;
 
 // WiFi Client
 WiFiClient espClient;
@@ -39,10 +28,6 @@ PubSubClient mqttClient(espClient);
 // MqttManager and Hardware Objects
 MqttManager* mqttManager;
 
-PhotoResistor* resistor;
-Pir* pir;
-Light* light;
-Roll* roll;
 Camera* camera;
 
 void connectToWIFI() {
@@ -85,21 +70,8 @@ void setup() {
   connectToMQTT();
 
   mqttManager = new MqttManager(&mqttClient, BUFFER_SIZE);
-  mqttManager->addPublisher(topic_light, "room1/light");
-  mqttManager->addPublisher(topic_roll, "room1/roll");
   mqttManager->addPublisher(topic_cam, "room1/cam");
-
-  pir = new Pir(PIR_PIN);
-  resistor = new PhotoResistor(PHOTO_RESISTOR_PIN);
-  light = new Light(LIGHT_PIN);
-  roll = new Roll(ROLL_PIN);
   camera = new Camera();
-  pir->attach(light);
-  pir->attach(roll);
-  resistor->attach(light);
-  resistor->attach(roll);
-  light->attach(mqttManager);
-  roll->attach(mqttManager);
   camera->attach(mqttManager);
 }
 
@@ -112,8 +84,6 @@ void loop() {
 
   unsigned long currentTime = millis();
   if (currentTime - lastNotifyTime >= notifyInterval) {
-    //light->notify();
-    //roll->notify();
     camera->notify();
     lastNotifyTime = currentTime;
   }
