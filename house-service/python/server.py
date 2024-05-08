@@ -2,8 +2,10 @@ from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.responses import HTMLResponse
 from fastapi_mqtt.fastmqtt import FastMQTT
 from fastapi_mqtt.config import MQTTConfig
-import asyncio
+from FireNet.firenet import FireNet
 import uvicorn
+import json
+import base64
 from connectionmanager import ConnectionManager
 
 app = FastAPI()
@@ -15,6 +17,7 @@ fast_mqtt = FastMQTT(config=mqtt_config)
 fast_mqtt.init_app(app)
 
 manager = ConnectionManager()
+firenet = FireNet()
 
 @fast_mqtt.on_connect()
 def connect(client, flags, rc, properties):
@@ -27,6 +30,11 @@ def disconnect(client, packet, exc=None):
 @fast_mqtt.subscribe("room1/cam")
 async def cam_handler(client, topic, payload, qos, properties):
     print("Received message on topic: ", topic)
+    prediction = firenet.predict(base64.b64decode(json.loads(payload.decode())["measure"]))
+    if prediction == 0:
+        print("Fire detected!")
+    else:
+        print("No fire detected")
     await manager.broadcast(payload.decode())
 
 @fast_mqtt.subscribe("room1/roll")
@@ -97,6 +105,10 @@ async def websocket_endpoint(websocket: WebSocket):
             print(f"Message received: {data}")
     except WebSocketDisconnect:
         manager.disconnect(websocket)
+
+
+
+
 
 if __name__ == "__main__":
     uvicorn.run(app, host="192.168.1.67", port=8080)
