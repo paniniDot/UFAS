@@ -2,7 +2,7 @@ from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.responses import HTMLResponse
 from fastapi_mqtt.fastmqtt import FastMQTT
 from fastapi_mqtt.config import MQTTConfig
-from FireNet.firenet import FireNet
+from firenet import FireNet
 import uvicorn
 import json
 import base64
@@ -30,7 +30,8 @@ def disconnect(client, packet, exc=None):
 @fast_mqtt.subscribe("room1/cam")
 async def cam_handler(client, topic, payload, qos, properties):
     print("Received message on topic: ", topic)
-    prediction = firenet.predict(base64.b64decode(json.loads(payload.decode())["measure"]))
+    img = base64.b64decode(json.loads(payload.decode())["measure"].split(",")[1])
+    prediction = firenet.predict(img)
     if prediction == 0:
         print("Fire detected!")
     else:
