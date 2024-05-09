@@ -10,7 +10,7 @@ from connectionmanager import ConnectionManager
 
 app = FastAPI()
 
-mqtt_config = MQTTConfig(host="192.168.1.67", port=1883)
+mqtt_config = MQTTConfig(host="192.168.1.56", port=1883)
 
 fast_mqtt = FastMQTT(config=mqtt_config)
 
@@ -62,7 +62,7 @@ html = """
     
     <script>
         document.addEventListener("DOMContentLoaded", function(event) {
-            var ws = new WebSocket("ws://192.168.1.67:8080/ws");
+            var ws = new WebSocket("ws://192.168.1.56:8080/ws");
             ws.onopen = function(event) {
                 console.log("WebSocket connection established.");
             };
@@ -112,4 +112,4 @@ async def websocket_endpoint(websocket: WebSocket):
 
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="192.168.1.67", port=8080)
+    uvicorn.run(app, host="192.168.1.56", port=8080)
