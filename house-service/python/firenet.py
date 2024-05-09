@@ -9,7 +9,7 @@ class FireNet:
 
     def predict(self, image):
         image = cv2.imdecode(np.asarray(bytearray(image), dtype="uint8"), cv2.IMREAD_COLOR)
-        image = tf.image.resize(image, (128, 128))
+        image = tf.image.resize(image, (240, 240))
         return self.model.predict(np.array([image/255.0])).argmax()
 
     def get_weights(self):
