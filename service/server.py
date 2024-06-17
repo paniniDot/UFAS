@@ -10,7 +10,7 @@ import base64
 import os
 from connectionmanager import ConnectionManager
 
-host = "localhost"
+host = "192.168.2.226"
 
 port_http = 8080
 
@@ -60,50 +60,6 @@ async def measure_handler(client, topic, payload, qos, properties):
 async def light_handler(client, topic, payload, qos, properties):
     print("Received message on topic: ", topic)
     await manager.broadcast(payload.decode())
-
-html = """
-<!DOCTYPE html>
-<html>
-<head> 
-    <title>WebSocket Test</title>
-</head>
-<body>
-    <h1>WebSocket Webcam</h1>
-    
-    
-    <img id="image" src="" alt="Live Webcamp">
-    <script>
-        document.addEventListener("DOMContentLoaded", function(event) {
-            var ws = new WebSocket("ws://192.168.1.56:8080/ws");
-            ws.onopen = function(event) {
-                console.log("WebSocket connection established.");
-            };
-            ws.onmessage = function(event) {
-                console.log("Message received:", event.data);
-                // Parse message JSON
-                var message = JSON.parse(event.data);
-                // Get the base64 encoded image data
-                if (message.name === "camera") {
-                    var imageData = message.measure;
-                    // Update the image src with the new data
-                    document.getElementById("image").src = imageData;            
-                }
-            };
-            ws.onerror = function(event) {
-                console.error("WebSocket error:", event);
-            };
-            ws.onclose = function(event) {
-                console.log("WebSocket connection closed.");
-            };
-            setInterval(function() {
-                ws.send("Hello, server!");
-            }, 1000);
-        });
-    </script>
-</body>
-</html>
-
-"""
 
 with open('service/dashboard/room.html', "r") as html_file:
     html = html_file.read()

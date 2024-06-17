@@ -14,11 +14,11 @@
 #define ROLL_PIN 33   // tbd
 
 // WiFi Configuration
-const char* ssid = "Fast$wag";
-const char* password = "SwAg2k24";
+const char* ssid = "asus";
+const char* password = "0123456789";
 
 // MQTT Configuration
-const char* mqtt_server = "192.168.1.67";
+const char* mqtt_server = "192.168.2.226";
 const int mqtt_port = 1883;
 
 // MQTT Topics

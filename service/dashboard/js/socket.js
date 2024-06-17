@@ -1,4 +1,4 @@
-const webSocket = new WebSocket('ws://localhost:8080/ws');
+const webSocket = new WebSocket('ws://192.168.2.226:8080/ws');
 
 webSocket.onopen = function () {
   console.log('Socket attivo.');
@@ -31,5 +31,5 @@ document.getElementById('websocketForm').addEventListener('submit', function (ev
   const messageInput = document.getElementById('message');
   const message = messageInput.value;
   sendMessage(message);
-  messageInput.value = ''; 
+  messageInput.value = '';
 });
