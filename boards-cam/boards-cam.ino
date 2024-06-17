@@ -73,6 +73,7 @@ void setup() {
   mqttManager->addPublisher(topic_cam, "room1/cam");
   camera = new Camera();
   camera->attach(mqttManager);
+  mqttManager.publishMessage("room_config", "room1/cam")
 }
 
 void loop() {

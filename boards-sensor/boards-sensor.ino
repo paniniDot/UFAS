@@ -95,6 +95,8 @@ void setup() {
   resistor->attach(roll);
   light->attach(mqttManager);
   roll->attach(mqttManager);
+  mqttManager.publishMessage("room_config", "room1/light")
+  mqttManager.publishMessage("room_config", "room1/roll")
 }
 
 void loop() {
