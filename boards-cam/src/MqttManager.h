@@ -14,10 +14,11 @@ private:
     int bufferLength;
 
     String getTopic(EventSourceType sourceType);
-    void publishMessage(String topic, String message);
+    
 public:
     MqttManager(PubSubClient* client, int bufferLength);
-
+    
+    void publishMessage(String topic, String message);
     void addPublisher(String topic, String publisher);
     void update(Event<String>* e);
 };

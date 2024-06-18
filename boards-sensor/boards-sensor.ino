@@ -84,6 +84,7 @@ void setup() {
   mqttManager = new MqttManager(&mqttClient, BUFFER_SIZE);
   mqttManager->addPublisher(topic_light, "room1/light");
   mqttManager->addPublisher(topic_roll, "room1/roll");
+  mqttManager->addPublisher("room/config", "room/config");
 
   pir = new Pir(PIR_PIN);
   resistor = new PhotoResistor(PHOTO_RESISTOR_PIN);
@@ -95,8 +96,8 @@ void setup() {
   resistor->attach(roll);
   light->attach(mqttManager);
   roll->attach(mqttManager);
-  mqttManager.publishMessage("room_config", "room1/light")
-  mqttManager.publishMessage("room_config", "room1/roll")
+  mqttManager->publishMessage("room/config", "room1/light");
+  mqttManager->publishMessage("room/config", "room1/roll");
 }
 
 void loop() {

@@ -1,5 +1,5 @@
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
-from fastapi.responses.HTMLResponse import HTMLResponse
+from fastapi.responses import HTMLResponse
 from fastapi_mqtt.fastmqtt import FastMQTT
 from fastapi_mqtt.config import MQTTConfig
 from fastapi.staticfiles import StaticFiles
@@ -55,6 +55,7 @@ def disconnect(client, packet, exc=None):
 
 @fast_mqtt.on_message()
 async def message_handler(client, topic, payload, qos, properties):
+    print(f"Received message on topic: {topic}")
 
 # funzione che consente di fare hand-shaking fra gli esp e il server  
 @fast_mqtt.subscribe("room_config")
@@ -70,7 +71,7 @@ async def room_config_handler(client, topic, payload, qos, properties):
             handler = create_handler(room, device_type)
             await fast_mqtt.subscribe(topic_str)(handler)
 
-with open('service/dashboard/room.html', "r") as html_file:
+with open('service/dashboard/house.html', "r") as html_file:
     html = html_file.read()
 
 @app.get("/")
@@ -85,7 +86,7 @@ async def websocket_endpoint(websocket: WebSocket):
             data = await websocket.receive_text()
             print(f"Message received: {data}")
     except WebSocketDisconnect:
-        manager.disconnect(websocket)
+        await manager.disconnect(websocket)
 
 if __name__ == "__main__":
     uvicorn.run(app, host=host, port=port_http)
