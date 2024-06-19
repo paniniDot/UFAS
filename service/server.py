@@ -28,23 +28,6 @@ firenet = FireNet()
 
 devices = {}
 
-def create_handler(room, device_type):
-    async def handler(client, topic, payload, qos, properties):
-        print(f"Received message on topic: {topic}")
-        data = payload.decode()
-        
-        if device_type == "cam":
-            img = base64.b64decode(json.loads(data)["measure"].split(",")[1])
-            prediction = firenet.predict(img)
-            if prediction == 0:
-                print("Fire detected!")
-            else:
-                print("No fire detected")
-        
-        await manager.broadcast(data)
-
-    return handler
-
 @fast_mqtt.on_connect()
 def connect(client, flags, rc, properties):
     print("Connected: ", client, flags, rc, properties)
@@ -58,18 +41,18 @@ async def message_handler(client, topic, payload, qos, properties):
     print(f"Received message on topic: {topic}")
 
 # funzione che consente di fare hand-shaking fra gli esp e il server  
-@fast_mqtt.subscribe("room_config")
-async def room_config_handler(client, topic, payload, qos, properties):
-    topic_str = payload.decode()
-    if topic_str.startswith("room"):
-        room, device_type = topic_str.split("/")
-        if room not in devices:
-            devices[room] = {}
-
-        if device_type not in devices[room]:
-            devices[room][device_type] = True
-            handler = create_handler(room, device_type)
-            await fast_mqtt.subscribe(topic_str)(handler)
+@fast_mqtt.subscribe("house/#")
+async def message_handler(client, topic, payload, qos, properties):
+    data = payload.decode()
+    house, room, device_type = topic.split("/")
+    if device_type == "cam":
+        img = base64.b64decode(json.loads(data)["measure"].split(",")[1])
+        prediction = firenet.predict(img)
+        if prediction == 0:
+            print("Fire detected!")
+        else:
+            print("No fire detected")
+    await manager.broadcast(data)
 
 with open('service/dashboard/house.html', "r") as html_file:
     html = html_file.read()

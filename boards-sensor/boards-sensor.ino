@@ -22,7 +22,7 @@ const char* mqtt_server = "192.168.2.226";
 const int mqtt_port = 1883;
 
 // MQTT Topics
-String room = "room1";
+String room = "house/room1";
 String esp = "1";
 const char* topic_receive = "mqttserver.to.mqttclient";
 
@@ -93,8 +93,6 @@ void setup() {
   resistor->attach(roll);
   light->attach(mqttManager);
   roll->attach(mqttManager);
-  mqttManager->publishMessage("room/config", (room + "/light").c_str());
-  mqttManager->publishMessage("room/config", (room + "/roll").c_str());
 }
 
 void loop() {
