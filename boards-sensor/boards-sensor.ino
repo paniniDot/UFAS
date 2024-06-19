@@ -22,8 +22,8 @@ const char* mqtt_server = "192.168.2.226";
 const int mqtt_port = 1883;
 
 // MQTT Topics
-const char* topic_light = "room1/light";
-const char* topic_roll = "room1/roll";
+String room = "room1";
+String esp = "1";
 const char* topic_receive = "mqttserver.to.mqttclient";
 
 // Notification Configuration
@@ -57,7 +57,7 @@ void connectToWIFI() {
 void connectToMQTT() {
   Serial.println("Connecting to MQTT server");
   while (!mqttClient.connected()) {
-    if (!mqttClient.connect("room2")) {
+    if (!mqttClient.connect((room + "/" + esp).c_str())) {
       delay(500);
     }
   }
@@ -81,10 +81,7 @@ void setup() {
   mqttClient.setCallback(messageReceivedCallback);
   connectToMQTT();
 
-  mqttManager = new MqttManager(&mqttClient, BUFFER_SIZE);
-  mqttManager->addPublisher(topic_light, "room1/light");
-  mqttManager->addPublisher(topic_roll, "room1/roll");
-  mqttManager->addPublisher("room/config", "room/config");
+  mqttManager = new MqttManager(&mqttClient, BUFFER_SIZE, room);
 
   pir = new Pir(PIR_PIN);
   resistor = new PhotoResistor(PHOTO_RESISTOR_PIN);
@@ -96,8 +93,8 @@ void setup() {
   resistor->attach(roll);
   light->attach(mqttManager);
   roll->attach(mqttManager);
-  mqttManager->publishMessage("room/config", "room1/light");
-  mqttManager->publishMessage("room/config", "room1/roll");
+  mqttManager->publishMessage("room/config", (room + "/light").c_str());
+  mqttManager->publishMessage("room/config", (room + "/roll").c_str());
 }
 
 void loop() {
