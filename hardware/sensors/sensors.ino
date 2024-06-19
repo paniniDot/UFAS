@@ -1,11 +1,14 @@
 #include <WiFi.h>
 #include <PubSubClient.h>
-#include "src/Pir.h"
-#include "src/PhotoResistor.h"
-#include "src/Light.h"
-#include "src/Roll.h"
-#include "src/MqttManager.h"
+#include "HardwareLib.h"
 
+// Hardware Definitions
+// #define LIGHT
+// #define ROLL
+// #define PIR
+// #define PHOTORESISTOR
+
+//Mqtt Buffer Size
 #define BUFFER_SIZE 2048
 
 // Pin Definitions
@@ -85,7 +88,7 @@ void messageReceivedCallback(char* topic, byte* payload, unsigned int length) {
 void setup() {
   Serial.begin(19200);
 
-  connectToWIFI();
+  connectToWiFi();
 
   mqttClient.setServer(MQTT_SERVER, MQTT_PORT);
   mqttClient.setBufferSize(BUFFER_SIZE);
@@ -93,7 +96,7 @@ void setup() {
 
   connectToMQTT();
 
-  mqttManager = new MqttManager(&mqttClient, BUFFER_SIZE, room);
+  mqttManager = new MqttManager(&mqttClient, BUFFER_SIZE, ROOM);
   pir = new Pir(PIR_PIN);
   resistor = new PhotoResistor(PHOTO_RESISTOR_PIN);
   light = new Light(LIGHT_PIN);
@@ -103,7 +106,7 @@ void setup() {
   resistor->attach(light);
   resistor->attach(roll);
   light->attach(mqttManager);
-  roll->attach(mqttManager)
+  roll->attach(mqttManager);
 }
 
 void loop() {
