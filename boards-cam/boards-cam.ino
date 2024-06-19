@@ -6,16 +6,17 @@
 #define BUFFER_SIZE 2048
 
 // WiFi Configuration
-const char* ssid = "asus";
-const char* password = "0123456789";
+#define SSID "asus"
+#define PASSWORD "0123456789"
 
 // MQTT Configuration
-const char* mqtt_server = "192.168.2.226";
-const int mqtt_port = 1883;
+#define MQTT_SERVER "192.168.2.226"
+#define MQTT_PORT 1883
+#define ROOM "house/room1"
 
 // MQTT Topics
-const char* topic_cam = "room1/cam";
-const char* topic_receive = "mqttserver.to.mqttclient";
+#define CLIENT_ID ROOM"/esp2"
+#define TOPIC_RECEIVE "mqttserver.to.mqttclient"
 
 // Notification Configuration
 unsigned long lastNotifyTime = 0;
@@ -27,35 +28,42 @@ PubSubClient mqttClient(espClient);
 
 // MqttManager and Hardware Objects
 MqttManager* mqttManager;
-
 Camera* camera;
 
-void connectToWIFI() {
+void connectToWiFi() {
   Serial.print("Connecting to ");
-  Serial.println(ssid);
+  Serial.println(SSID);
+  
   WiFi.mode(WIFI_STA);
-  WiFi.begin(ssid, password);
+  WiFi.begin(SSID, PASSWORD);
+  
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
+    Serial.print(".");
   }
-  Serial.print("WiFi connected. IP address: ");
+  
+  Serial.println("\nWiFi connected. IP address: ");
   Serial.println(WiFi.localIP());
 }
 
 void connectToMQTT() {
-  Serial.println("Connecting to MQTT server");
+  Serial.println("Connecting to MQTT server...");
+  
   while (!mqttClient.connected()) {
-    if (!mqttClient.connect("room1")) {
+    if (mqttClient.connect(CLIENT_ID)) {
+      Serial.println("Connected to MQTT server");
+      mqttClient.subscribe(TOPIC_RECEIVE);
+    } else {
+      Serial.print(".");
       delay(500);
     }
   }
-  Serial.println("Connected to MQTT server");
-  mqttClient.subscribe(topic_receive);
 }
 
 void messageReceivedCallback(char* topic, byte* payload, unsigned int length) {
   Serial.print("Message received from server: ");
-  for (int i = 0; i < length; i++) {
+
+  for (unsigned int i = 0; i < length; i++) {
     Serial.print((char)payload[i]);
   }
   Serial.println();
@@ -63,17 +71,18 @@ void messageReceivedCallback(char* topic, byte* payload, unsigned int length) {
 
 void setup() {
   Serial.begin(115200);
-  connectToWIFI();
-  mqttClient.setServer(mqtt_server, mqtt_port);
+  
+  connectToWiFi();
+  
+  mqttClient.setServer(MQTT_SERVER, MQTT_PORT);
   mqttClient.setBufferSize(BUFFER_SIZE);
   mqttClient.setCallback(messageReceivedCallback);
+  
   connectToMQTT();
 
-  mqttManager = new MqttManager(&mqttClient, BUFFER_SIZE);
-  mqttManager->addPublisher(topic_cam, "room1/cam");
+  mqttManager = new MqttManager(&mqttClient, BUFFER_SIZE, ROOM);
   camera = new Camera();
   camera->attach(mqttManager);
-  mqttManager->publishMessage("room_config", "room1/cam");
 }
 
 void loop() {
@@ -81,6 +90,7 @@ void loop() {
     Serial.println("MQTT server connection lost. Reconnecting...");
     connectToMQTT();
   }
+  
   mqttClient.loop();
 
   unsigned long currentTime = millis();
