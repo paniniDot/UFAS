@@ -10,7 +10,7 @@ import base64
 import os
 from connectionmanager import ConnectionManager
 
-host = "192.168.2.226"
+host = "192.168.1.47"
 port_http = 8080
 port_mqtt = 1883
 
@@ -40,7 +40,6 @@ def disconnect(client, packet, exc=None):
 async def message_handler(client, topic, payload, qos, properties):
     print(f"Received message on topic: {topic}")
 
-# funzione che consente di fare hand-shaking fra gli esp e il server  
 @fast_mqtt.subscribe("house/#")
 async def message_handler(client, topic, payload, qos, properties):
     data = payload.decode()

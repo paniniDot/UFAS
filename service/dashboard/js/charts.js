@@ -60,7 +60,9 @@ function updateChart(chartId, data, layout, time, value) {
     data[0].y.shift();
   }
 
-  if (value > 0) {
+  console.log(data[0])
+
+  if (value >= 0) {
     const Column = `${day}-${hours}`;
     if (!data[0].x.includes(Column)) {
       data[0].x.push(Column);
@@ -68,7 +70,6 @@ function updateChart(chartId, data, layout, time, value) {
     }else{
       data[0].y[data[0].x.indexOf(Column)]=data[0].y[data[0].x.indexOf(Column)]+(1 / 3600) * 100;
     }
-    
   }
 
   Plotly.update(chartId, data, layout);
