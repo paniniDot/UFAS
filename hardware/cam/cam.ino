@@ -1,8 +1,10 @@
+#define CAMERA
+
 #include <WiFi.h>
 #include <PubSubClient.h>
-#include "src/MqttManager.h"
-#include "src/Camera.h"
+#include <HardwareLib.h>
 
+// Buffer size Definition
 #define BUFFER_SIZE 2048
 
 // WiFi Configuration

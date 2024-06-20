@@ -1,12 +1,6 @@
 #include <WiFi.h>
 #include <PubSubClient.h>
-#include "HardwareLib.h"
-
-// Hardware Definitions
-// #define LIGHT
-// #define ROLL
-// #define PIR
-// #define PHOTORESISTOR
+#include <HardwareLib.h>
 
 //Mqtt Buffer Size
 #define BUFFER_SIZE 2048
