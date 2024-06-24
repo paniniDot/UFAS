@@ -42,16 +42,18 @@ async def message_handler(client, topic, payload, qos, properties):
 
 @fast_mqtt.subscribe("house/#")
 async def message_handler(client, topic, payload, qos, properties):
-    data = payload.decode()
+    data = json.loads(payload.decode())
     house, room, device_type = topic.split("/")
     if device_type == "cam":
-        img = base64.b64decode(json.loads(data)["measure"].split(",")[1])
+        img = base64.b64decode(data["measure"].split(",")[1])
         prediction = firenet.predict(img)
         if prediction == 0:
             print("Fire detected!")
         else:
             print("No fire detected")
-    await manager.broadcast(data)
+    data['room'] = room
+    updated_data = json.dumps(data)
+    await manager.broadcast(updated_data)
 
 with open('service/dashboard/house.html', "r") as html_file:
     html = html_file.read()

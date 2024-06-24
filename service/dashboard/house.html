@@ -18,24 +18,6 @@
     </header>
 
     <div class="d-flex align-content-start flex-wrap m-4" id="cardContainer">
-
-        <div class="card m-2">
-            <div class="card-header">Room</div>
-            <div class="card-body">
-                <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="150" fill="currentColor"
-                    class="bi bi-house" viewBox="0 0 16 16">
-                    <path
-                        d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L2 8.207V13.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V8.207l.646.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293zM13 7.207V13.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V7.207l5-5z" />
-                </svg>
-            </div>
-            <div class="card-footer">
-                <div class="btn-group">
-                    <a href="dashboard/room.html" class="btn btn-sm btn-outline-secondary">View</a>
-                    <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>
-                    <button type="button" class="btn btn-sm btn-outline-secondary">Remove</button>
-                </div>
-            </div>
-        </div>
         <div class="card m-2" id="addRoomCard">
             <div class="card-header">Add room</div>
             <div class="card-body">
@@ -53,76 +35,26 @@
                 </div>
             </div>
         </div>
-
     </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // Funzione per creare l'elemento HTML della card della stanza
-        function createRoomCard(roomName) {
-            const newCard = document.createElement('div');
-            newCard.className = 'card m-2';
-            newCard.innerHTML = `
-        <div class="card-header">${roomName}</div>
-        <div class="card-body">
-            <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="150" fill="currentColor"
-                    class="bi bi-house" viewBox="0 0 16 16">
-                    <path
-                        d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L2 8.207V13.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V8.207l.646.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293zM13 7.207V13.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V7.207l5-5z" />
-                </svg>
-        </div>
-        <div class="card-footer">
-            <div class="btn-group">
-                <a href="dashboard/room.html" class="btn btn-sm btn-outline-secondary">View</a>
-                <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>
-                <button type="button" class="btn btn-sm btn-outline-secondary btn-remove">Remove</button>
-            </div>
-        </div>
-    `;
-            // Aggiungi event listener al pulsante Remove
-            newCard.querySelector('.btn-remove').addEventListener('click', function () {
-                removeRoom(roomName, newCard);
-            });
-            return newCard;
-        }
-
-        // Funzione per rimuovere la stanza dal DOM e dal localStorage
-        function removeRoom(roomName, cardElement) {
-            // Rimuovi la card dal DOM
-            cardElement.remove();
-            // Rimuovi la stanza dal localStorage
-            const rooms = JSON.parse(localStorage.getItem('rooms')) || [];
-            const filteredRooms = rooms.filter(room => room.name !== roomName);
-            localStorage.setItem('rooms', JSON.stringify(filteredRooms));
-        }
-
-        // Recupera le stanze salvate dal localStorage e le visualizza
-        function loadRooms() {
-            const rooms = JSON.parse(localStorage.getItem('rooms')) || [];
-            const container = document.getElementById('cardContainer');
-            rooms.forEach(room => {
-                container.insertBefore(createRoomCard(room.name), document.getElementById('addRoomCard'));
-            });
-        }
-
-        // Salva le stanze nel localStorage
-        function saveRoom(name) {
-            const rooms = JSON.parse(localStorage.getItem('rooms')) || [];
-            rooms.push({ name: name });
-            localStorage.setItem('rooms', JSON.stringify(rooms));
-        }
-
-        // Gestione del click per aggiungere una nuova stanza
-        document.getElementById('addRoomCard').addEventListener('click', function () {
-            const roomName = `New Room ${Date.now()}`; // Nome univoco per la stanza
-            saveRoom(roomName);
-            const container = document.getElementById('cardContainer');
-            const newCard = createRoomCard(roomName);
-            container.insertBefore(newCard, document.getElementById('addRoomCard'));
-        });
-
-        // Carica le stanze salvate quando la pagina viene caricata
+    <script src="dashboard/js/room_utils.js"></script>
+    <script src="dashboard/js/socket.js"></script>
+    <script>       
         window.onload = loadRooms;
+        //handler messaggi su house.html
+        webSocket.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            const { src, measure, timestamp, room } = data;
 
+            let roomDiv = document.getElementById(room);
+            if (!roomDiv) {
+                const container = document.getElementById('cardContainer');
+                const newCard = createRoomCard(room);
+                container.insertBefore(newCard, document.getElementById('addRoomCard'));
+                saveRoom(room);
+            }
+        };
     </script>
 </body>
 

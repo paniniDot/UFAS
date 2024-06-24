@@ -10,7 +10,7 @@ const chartData = {
     layout: {
       title: 'Storico tenda',
       xaxis: {
-        title: 'giorno-ora',
+        title: 'ora-minuto',
         type: 'category',
         range: [0, 4],
         tickformat: '%D-%H'
@@ -32,7 +32,7 @@ const chartData = {
     layout: {
       title: 'Storico luce',
       xaxis: {
-        title: 'giorno-ora',
+        title: 'ora-minuto',
         range: [0, 4],
         type: 'category',
         tickformat: '%D-%H'
@@ -51,19 +51,20 @@ function initializeChart(chartId, data, layout) {
 }
 
 function updateChart(chartId, data, layout, time, value) {
-  const date = new Date(time);
-  const day = String(date.getDate()).padStart(2, '0');
-  const hours = String(date.getHours()).padStart(2, '0');
+  const date = new Date(time * 1000)
+  const hours = date.getHours()
+  const minutes = date.getMinutes()
+  const seconds = date.getSeconds()
+  
+  console.log(hours, minutes)
 
   if (data[0].x.length >= 4) {
     data[0].x.shift();
     data[0].y.shift();
   }
 
-  console.log(data[0])
-
   if (value >= 0) {
-    const Column = `${day}-${hours}`;
+    const Column = `${hours}:${minutes}:${seconds}`;
     if (!data[0].x.includes(Column)) {
       data[0].x.push(Column);
       data[0].y.push((1 / 3600) * 100);
