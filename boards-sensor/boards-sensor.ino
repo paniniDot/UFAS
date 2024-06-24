@@ -21,7 +21,7 @@
 // MQTT Configuration
 #define MQTT_SERVER "192.168.2.226"
 #define MQTT_PORT 1883
-#define ROOM "room1"
+#define ROOM "house/room1"
 
 // MQTT Topics
 #define CLIENT_ID ROOM"/esp1"
