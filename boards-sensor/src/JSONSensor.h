@@ -27,7 +27,7 @@ protected:
     }
 
 public:
-    JSONSensor(const char* name) : name(name), timeClient(ntpUDP, "pool.ntp.org", 7200) {
+    JSONSensor(const char* name) : name(name), timeClient(ntpUDP, "pool.ntp.org") {
         timeClient.begin();
         timeClient.update();
     }
