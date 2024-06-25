@@ -1,5 +1,5 @@
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, FileResponse
 from fastapi_mqtt.fastmqtt import FastMQTT
 from fastapi_mqtt.config import MQTTConfig
 from fastapi.staticfiles import StaticFiles
@@ -10,12 +10,13 @@ import base64
 import os
 from connectionmanager import ConnectionManager
 
-host = "192.168.2.2"
+host = "192.168.2.226"
 port_http = 8080
 port_mqtt = 1883
 
 app = FastAPI()
 
+# Serve the dashboard and FireNet directories
 app.mount("/dashboard", StaticFiles(directory="service/dashboard"), name="dashboard")
 app.mount("/FireNet", StaticFiles(directory="service/FireNet"), name="FireNet")
 
@@ -55,12 +56,9 @@ async def message_handler(client, topic, payload, qos, properties):
     updated_data = json.dumps(data)
     await manager.broadcast(updated_data)
 
-with open('service/dashboard/house.html', "r") as html_file:
-    html = html_file.read()
-
 @app.get("/")
 async def root():
-    return HTMLResponse(html)
+    return FileResponse('service/dashboard/index.html')
 
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):

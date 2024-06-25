@@ -1,4 +1,4 @@
-const webSocket = new WebSocket('ws://192.168.2.2:8080/ws');
+const webSocket = new WebSocket('ws://192.168.2.226:8080/ws');
 
 webSocket.onopen = function () {
   console.log('Socket attivo.');
@@ -17,7 +17,7 @@ webSocket.onmessage = (event) => {
     if (!roomDiv) {
       const container = document.getElementById('cardContainer');
       const newCard = createRoomCard(room);
-      container.insertBefore(newCard, document.getElementById('addRoomCard'));
+      container.appendChild(newCard);
       saveRoom(room);
     }
   }
@@ -31,10 +31,10 @@ webSocket.onmessage = (event) => {
     console.log("Nome stanza su ws = " + room)
     console.log("Nome stanza su URL = " + new URLSearchParams(window.location.search).get('room'))
     if (room == new URLSearchParams(window.location.search).get('room')) {
+      updateDashboard(name, measure);
       if (name == "light" || name == "roll") {
         updateChart(namechart, chartData[name].data, chartData[name].layout, data.timestamp, data.measure);
       }
-      updateDashboard(name, measure);
     }
   }
 

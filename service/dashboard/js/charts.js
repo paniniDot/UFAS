@@ -46,8 +46,10 @@ const chartData = {
 };
 
 function initializeChart(chartId, data, layout) {
-  Plotly.newPlot(chartId, data, layout, { displayModeBar: true,
-    responsive: true });
+  Plotly.newPlot(chartId, data, layout, {
+    displayModeBar: true,
+    responsive: true
+  });
 }
 
 function updateChart(chartId, data, layout, time, value) {
@@ -55,7 +57,7 @@ function updateChart(chartId, data, layout, time, value) {
   const hours = date.getHours()
   const minutes = date.getMinutes()
   const seconds = date.getSeconds()
-  
+
   console.log(hours, minutes)
 
   if (data[0].x.length >= 4) {
@@ -68,8 +70,8 @@ function updateChart(chartId, data, layout, time, value) {
     if (!data[0].x.includes(Column)) {
       data[0].x.push(Column);
       data[0].y.push((1 / 3600) * 100);
-    }else{
-      data[0].y[data[0].x.indexOf(Column)]=data[0].y[data[0].x.indexOf(Column)]+(1 / 3600) * 100;
+    } else {
+      data[0].y[data[0].x.indexOf(Column)] = data[0].y[data[0].x.indexOf(Column)] + (1 / 3600) * 100;
     }
   }
 

@@ -11,22 +11,21 @@
 </head>
 
 <body data-bs-theme="light">
-        <header class="navbar navbar-expand-lg bg-body-tertiary shadow py-3">
-            <ul class="navbar-nav navbar-collapse m-auto justify-content-center">
-                <li class="nav-item"><a href="../" class="nav-link">House</a></li>
-                <li class="nav-item"><a href="" class="nav-link active" aria-current="page">Room</a></li>
-            </ul>
-        </header>
+    <header class="navbar navbar-expand-lg bg-body-tertiary shadow py-3">
+        <ul class="navbar-nav navbar-collapse m-auto justify-content-center">
+            <li class="nav-item"><a href="../" class="nav-link">House</a></li>
+            <li class="nav-item"><a href="" class="nav-link active" aria-current="page">Room</a></li>
+        </ul>
+    </header>
     <div class="d-flex justify-content-around flex-wrap  m-4">
-        <div class="card m-2 col-3">
+        <div id="roll-card" class="d-none card m-2 col-3">
             <div class="card-header">rool</div>
             <div class="card-body p-0">
                 <form class="col-12">
                     <label for="rollrange" class="form-label"></label>
                     <div class="d-flex justify-content-around">
                         <i class="bi bi-arrow-down"></i>
-                        <input type="range" class="form-range" min="0" max="100" step="10" value="0"
-                            id="rollrange">
+                        <input type="range" class="form-range" min="0" max="100" step="10" value="0" id="rollrange">
                         <span class="position-absolute badge start-0 rounded-pill bg-primary"
                             style="transform: translateX(+12px) translateY(-120%);" id="rollvalue">0
                         </span>
@@ -39,7 +38,7 @@
                 <div id="rollchart"></div>
             </div>
         </div>
-        <div class="card m-2 col-3">
+        <div id="light-card" class="d-none card m-2 col-3">
             <div class="card-header">light</div>
             <div class="card-body">
                 <form>
@@ -54,7 +53,7 @@
                 <div id="lightchart"></div>
             </div>
         </div>
-        <div class="card m-2 col-3">
+        <div id="cam-card" class="d-none card m-2 col-3">
             <div class="card-header">camera</div>
             <div class="card-body">
                 <img id="image" src="" alt="Live Webcamp">

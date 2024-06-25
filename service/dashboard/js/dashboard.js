@@ -12,23 +12,36 @@ const valueSpan = document.getElementById('rollvalue');
 lightswitch.disabled = false;
 range.disabled = false;
 
-function updateDashboard(name, value) {
-  if (name == "light") {
-    lightswitch.checked = value;
-    if (lightswitch.checked) {
-      lightbulbIcon.classList.replace("bi-lightbulb-off", "bi-lightbulb");
-    } else {
-      lightbulbIcon.classList.replace("bi-lightbulb", "bi-lightbulb-off");
-    }
-  } else if (name == "roll") {
-    valueSpan.textContent = `${value}`;
-    const offset = ((value - range.min + 2) / (range.max - range.min + 4)) * range.offsetWidth;
-    valueSpan.style.transform = `translateX(${offset}px) translateY(-120%)`;
-    range.value = value;
-  } else if (name == "camera") {
-    document.getElementById("image").src = value;
+document.addEventListener('DOMContentLoaded', () => {
+window.updateDashboard = function(name, value) {
+  if (name === "light") {
+      lightswitch.checked = value;
+      if (lightswitch.checked) {
+          lightbulbIcon.classList.replace("bi-lightbulb-off", "bi-lightbulb");
+      } else {
+          lightbulbIcon.classList.replace("bi-lightbulb", "bi-lightbulb-off");
+      }
+      activateCard("light-card");
+  } else if (name === "roll") {
+      valueSpan.textContent = `${value}`;
+      const offset = ((value - range.min + 2) / (range.max - range.min + 4)) * range.offsetWidth;
+      valueSpan.style.transform = `translateX(${offset}px) translateY(-120%)`;
+      range.value = value;
+      activateCard("roll-card");
+  } else if (name === "camera") {
+      document.getElementById("image").src = value;
+      activateCard("cam-card");
   }
 }
+
+function activateCard(cardId) {
+  const card = document.getElementById(cardId);
+  if (card) {
+      card.classList.remove("d-none"); // Show the card
+  }
+}
+});
+
 
 document.addEventListener('DOMContentLoaded', () => {
   lightswitch.addEventListener("click", () => {

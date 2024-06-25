@@ -13,7 +13,7 @@ function createRoomCard(roomName) {
         </div>
         <div class="card-footer">
             <div class="btn-group">
-                <a href="dashboard/room.html?room=${roomName}" class="btn btn-sm btn-outline-secondary">View</a>
+                <a href="room.html?room=${roomName}" class="btn btn-sm btn-outline-secondary">View</a>
                 <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>
                 <button type="button" class="btn btn-sm btn-outline-secondary btn-remove">Remove</button>
             </div>
