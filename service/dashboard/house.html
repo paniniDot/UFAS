@@ -40,22 +40,6 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="dashboard/js/room_utils.js"></script>
     <script src="dashboard/js/socket.js"></script>
-    <script>       
-        window.onload = loadRooms;
-        //handler messaggi su house.html
-        webSocket.onmessage = (event) => {
-            const data = JSON.parse(event.data);
-            const { src, measure, timestamp, room } = data;
-
-            let roomDiv = document.getElementById(room);
-            if (!roomDiv) {
-                const container = document.getElementById('cardContainer');
-                const newCard = createRoomCard(room);
-                container.insertBefore(newCard, document.getElementById('addRoomCard'));
-                saveRoom(room);
-            }
-        };
-    </script>
 </body>
 
 </html>

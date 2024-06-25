@@ -70,25 +70,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/11.0.2/bootstrap-slider.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="js/socket.js"></script>
-    <script>
-        //handler messaggi su room.html
-        webSocket.onmessage = (event) => {
-            console.log('WebSocket message received:', event);
-            const data = JSON.parse(event.data);
-            const measure = data.measure;
-            const name = data.name;
-            const room = data.room; 
-            const namechart = name + "chart";
-            console.log("Nome stanza su ws = " + room)
-            console.log("Nome stanza su URL = " + new URLSearchParams(window.location.search).get('room'))
-            if (room == new URLSearchParams(window.location.search).get('room')) {
-                if (name == "light" || name == "roll") {
-                    updateChart(namechart, chartData[name].data, chartData[name].layout, data.timestamp, data.measure);
-                }
-                updateDashboard(name, measure);
-            }
-        }
-    </script>
     <script src="js/dashboard.js"></script>
     <script src="js/charts.js"></script>
 </body>

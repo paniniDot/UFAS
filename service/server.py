@@ -10,7 +10,7 @@ import base64
 import os
 from connectionmanager import ConnectionManager
 
-host = "192.168.1.47"
+host = "192.168.2.2"
 port_http = 8080
 port_mqtt = 1883
 

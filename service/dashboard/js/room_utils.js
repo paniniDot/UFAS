@@ -45,3 +45,5 @@ function saveRoom(name) {
     rooms.push({ name: name });
     localStorage.setItem('rooms', JSON.stringify(rooms));
 }
+
+window.onload = loadRooms;
