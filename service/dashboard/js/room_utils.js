@@ -36,7 +36,7 @@ function loadRooms() {
     const rooms = JSON.parse(localStorage.getItem('rooms')) || [];
     const container = document.getElementById('cardContainer');
     rooms.forEach(room => {
-        container.insertBefore(createRoomCard(room.name), document.getElementById('addRoomCard'));
+        container.appendChild(createRoomCard(room.name));
     });
 }
 

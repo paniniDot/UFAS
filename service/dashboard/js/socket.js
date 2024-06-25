@@ -28,8 +28,6 @@ webSocket.onmessage = (event) => {
     const name = data.name;
     const room = data.room;
     const namechart = name + "chart";
-    console.log("Nome stanza su ws = " + room)
-    console.log("Nome stanza su URL = " + new URLSearchParams(window.location.search).get('room'))
     if (room == new URLSearchParams(window.location.search).get('room')) {
       updateDashboard(name, measure);
       if (name == "light" || name == "roll") {
