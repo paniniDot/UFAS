@@ -8,7 +8,7 @@ function createJson(obj, value) {
 
 function createRollCard() {
   return `
-      <div id="roll-card" class="card m-2 col-3">
+      <div id="roll-card" class="card m-2" style="min-width: 600px;">
           <div class="card-header">roll</div>
           <div class="card-body p-0">
               <form class="col-12">
@@ -32,7 +32,7 @@ function createRollCard() {
 
 function createLightCard() {
   return `
-      <div id="light-card" class="card m-2 col-3">
+      <div id="light-card" class="card m-2" style="min-width: 600px;">
           <div class="card-header">light</div>
           <div class="card-body">
               <form>
@@ -52,7 +52,7 @@ function createLightCard() {
 
 function createCamCard() {
   return `
-      <div id="cam-card" class="card m-2 col-3">
+      <div id="cam-card" class="card m-2" style="min-width: 600px;">
           <div class="card-header">camera</div>
           <div class="card-body">
               <img id="image" src="" alt="Live Webcam">
