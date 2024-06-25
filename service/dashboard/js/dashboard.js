@@ -7,7 +7,7 @@ function createJson(obj, value) {
 }
 
 function createRollCard() {
-  return `g
+  return `
       <div id="roll-card" class="card m-2 col-3">
           <div class="card-header">roll</div>
           <div class="card-body p-0">
