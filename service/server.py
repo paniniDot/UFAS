@@ -10,7 +10,7 @@ import base64
 import os
 from connectionmanager import ConnectionManager
 
-host = "192.168.2.226"
+host = "192.168.1.47"
 port_http = 8080
 port_mqtt = 1883
 
@@ -41,18 +41,18 @@ def disconnect(client, packet, exc=None):
 async def message_handler(client, topic, payload, qos, properties):
     print(f"Received message on topic: {topic}")
 
-@fast_mqtt.subscribe("house/#")
+@fast_mqtt.subscribe("house/output/#")
 async def message_handler(client, topic, payload, qos, properties):
     data = json.loads(payload.decode())
-    house, room, device_type = topic.split("/")
-    if device_type == "cam":
+    _, _, room = topic.split("/")
+    if data["name"] == "cam":
         img = base64.b64decode(data["measure"].split(",")[1])
         prediction = firenet.predict(img)
         if prediction == 0:
             print("Fire detected!")
         else:
             print("No fire detected")
-    data['room'] = room
+    data["room"] = room
     updated_data = json.dumps(data)
     await manager.broadcast(updated_data)
 
@@ -67,6 +67,9 @@ async def websocket_endpoint(websocket: WebSocket):
         while True:
             data = await websocket.receive_text()
             print(f"Message received: {data}")
+            # {name: house/input/roomX/light_roll measure: on_off}
+            data = json.loads(data)
+            fast_mqtt.publish("house/input/"+data["room"], data["measure"])
     except WebSocketDisconnect:
         await manager.disconnect(websocket)
 

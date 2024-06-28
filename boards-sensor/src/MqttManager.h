@@ -10,15 +10,14 @@
 class MqttManager : public Observer<String> {
 private:
     PubSubClient* mqttClient;
-    String room;
+    String topic;
     int bufferLength;
 
     String getTopic(EventSourceType sourceType);
-    
+    void publishMessage(String message);    
 public:
-    MqttManager(PubSubClient* client, int bufferLength, String room);
+    MqttManager(PubSubClient* client, int bufferLength, String topic);
 
-    void publishMessage(String topic, String message);
     void update(Event<String>* e);
 };
 

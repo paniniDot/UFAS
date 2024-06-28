@@ -15,17 +15,17 @@
 #define ROLL_PIN 33   // tbd
 
 // WiFi Configuration
-#define SSID "asus"
-#define PASSWORD "0123456789"
+#define SSID "TIM-20456855_EXT"
+#define PASSWORD "mattimichi"
 
 // MQTT Configuration
-#define MQTT_SERVER "192.168.2.226"
+#define MQTT_SERVER "192.168.1.47"
 #define MQTT_PORT 1883
-#define ROOM "house/room1"
+#define MQTT_CLIENT_ID "room1/esp1"
 
 // MQTT Topics
-#define CLIENT_ID ROOM"/esp1"
-#define TOPIC_RECEIVE "mqttserver.to.mqttclient"
+#define SEND_TOPIC "house/output/room1"
+#define RECEIVE_TOPIC "house/input/room1"
 
 // Notification Configuration
 unsigned long lastNotifyTime = 0;
@@ -63,9 +63,9 @@ void connectToMQTT() {
   Serial.println("Connecting to MQTT server...");
   
   while (!mqttClient.connected()) {
-    if (mqttClient.connect(CLIENT_ID)) {
+    if (mqttClient.connect(MQTT_CLIENT_ID)) {
       Serial.println("Connected to MQTT server");
-      mqttClient.subscribe(TOPIC_RECEIVE);
+      mqttClient.subscribe(RECEIVE_TOPIC);
     } else {
       Serial.print(".");
       delay(500);
@@ -85,7 +85,7 @@ void messageReceivedCallback(char* topic, byte* payload, unsigned int length) {
 void setup() {
   Serial.begin(19200);
 
-  connectToWIFI();
+  connectToWiFi();
 
   mqttClient.setServer(MQTT_SERVER, MQTT_PORT);
   mqttClient.setBufferSize(BUFFER_SIZE);
@@ -93,7 +93,7 @@ void setup() {
 
   connectToMQTT();
 
-  mqttManager = new MqttManager(&mqttClient, BUFFER_SIZE, room);
+  mqttManager = new MqttManager(&mqttClient, BUFFER_SIZE, SEND_TOPIC);
   pir = new Pir(PIR_PIN);
   resistor = new PhotoResistor(PHOTO_RESISTOR_PIN);
   light = new Light(LIGHT_PIN);
@@ -103,7 +103,7 @@ void setup() {
   resistor->attach(light);
   resistor->attach(roll);
   light->attach(mqttManager);
-  roll->attach(mqttManager)
+  roll->attach(mqttManager);
 }
 
 void loop() {

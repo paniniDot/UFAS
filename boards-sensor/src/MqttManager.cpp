@@ -1,34 +1,19 @@
 #include "WString.h"
 #include "MqttManager.h"
 
-MqttManager::MqttManager(PubSubClient* client, int bufferLength, String room) : mqttClient(client) {
+MqttManager::MqttManager(PubSubClient* client, int bufferLength, String topic) : mqttClient(client) {
     this->bufferLength = bufferLength;
-    this->room = room;
-}
-
-String MqttManager::getTopic(EventSourceType sourceType) {
-    switch (sourceType) {
-        case ROLL:
-            return this->room + "/roll";
-        case LIGHT:
-            return this->room + "/light";
-        case CAMERA:
-            return this->room + "/cam";
-        default:
-            return "unknown";
-    }
+    this->topic = topic;
 }
 
 void MqttManager::update(Event<String>* e) {
-    String topic = getTopic(e->getSrcType());
     String message = *(e->getEventArgs());
-    publishMessage(topic, message);
+    publishMessage(message);
 }
 
-
-void MqttManager::publishMessage(String topic, String message) {
+void MqttManager::publishMessage(String message) {
     int fbLen = message.length();
-    mqttClient->beginPublish(topic.c_str(), fbLen, true);
+    mqttClient->beginPublish(this->topic.c_str(), fbLen, true);
     String str = "";
     for (size_t n = 0; n < fbLen; n = n + bufferLength) {
         if (n + bufferLength < fbLen) {
@@ -41,5 +26,5 @@ void MqttManager::publishMessage(String topic, String message) {
         }
     }
     mqttClient->endPublish();
-    Serial.println("Message published to " + topic);
+    Serial.println("Message published to " + this->topic);
 }

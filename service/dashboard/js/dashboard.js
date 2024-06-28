@@ -1,6 +1,9 @@
+const room = new URLSearchParams(window.location.search).get('room')
+
 function createJson(obj, value) {
   const json = {
     name: obj,
+    room: room,
     measure: value,
   }
   return JSON.stringify(json);
@@ -136,7 +139,7 @@ const chartData = {
     layout: {
       title: 'Storico tenda',
       xaxis: {
-        title: 'ora-minuto',
+        title: 'hh:mm:ss',
         type: 'category',
         range: [0, 4],
         tickformat: '%D-%H'
@@ -158,7 +161,7 @@ const chartData = {
     layout: {
       title: 'Storico luce',
       xaxis: {
-        title: 'ora-minuto',
+        title: 'hh:mm:ss',
         range: [0, 4],
         type: 'category',
         tickformat: '%D-%H'
