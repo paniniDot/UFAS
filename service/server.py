@@ -67,7 +67,6 @@ async def websocket_endpoint(websocket: WebSocket):
         while True:
             data = await websocket.receive_text()
             print(f"Message received: {data}")
-            # {name: house/input/roomX/light_roll measure: on_off}
             data = json.loads(data)
             fast_mqtt.publish("house/input/"+data["room"], data["measure"])
     except WebSocketDisconnect:
