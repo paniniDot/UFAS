@@ -68,7 +68,7 @@ async def websocket_endpoint(websocket: WebSocket):
             data = await websocket.receive_text()
             print(f"Message received: {data}")
             data = json.loads(data)
-            fast_mqtt.publish("house/input/"+data["room"], data["measure"])
+            fast_mqtt.publish("house/input/"+data["room"]+"/"+data["name"], data["measure"])
     except WebSocketDisconnect:
         await manager.disconnect(websocket)
 

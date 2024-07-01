@@ -82,16 +82,18 @@ void messageReceivedCallback(char* topic, byte* payload, unsigned int length) {
   }
   Serial.println(message);
 
-  if (String(topic) == String(RECEIVE_TOPIC) + "/light") {
-    int lightValue = message.toInt();
-    light->update(lightValue);
-    Serial.print("Light value updated to: ");
-    Serial.println(lightValue);
+  if (String(topic) == String(RECEIVE_TOPIC) + "/manual_light") {
+    Event<int> e(EventSourceType::LIGHT, new int(message.toInt()));
+    light->update(&e);
+  } else if (String(topic) == String(RECEIVE_TOPIC) + "/light") {
+    Event<int> e(EventSourceType::MANUAL_LIGHT, new int(message.toInt()));
+    light->update(&e);
+  } else if (String(topic) == String(RECEIVE_TOPIC) + "/manual_roll") {
+    Event<int> e(EventSourceType::MANUAL_ROLL, new int(message.toInt()));
+    roll->update(&e);
   } else if (String(topic) == String(RECEIVE_TOPIC) + "/roll") {
-    int rollValue = message.toInt();
-    roll->update(rollValue);
-    Serial.print("Roll value updated to: ");
-    Serial.println(rollValue);
+    Event<int> e(EventSourceType::MANUAL_ROLL, new int(message.toInt()));
+    roll->update(&e);
   }
 }
 
