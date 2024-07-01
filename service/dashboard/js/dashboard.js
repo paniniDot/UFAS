@@ -78,13 +78,8 @@ function updateChart(name, time, value) {
     chartData[name].data[0].y.shift();
   }
 
-  if (!chartData[name].data[0].x.includes(Column)) {
-    chartData[name].data[0].x.push(Column);
-    chartData[name].data[0].y.push(value);
-  } else {
-    const index = chartData[name].data[0].x.indexOf(Column);
-    chartData[name].data[0].y[index] = chartData[name].data[0].y[index] + value;
-  }
+  chartData[name].data[0].x.push(Column);
+  chartData[name].data[0].y.push(value);
 
   Plotly.update(name + "chart", chartData[name].data, chartData[name].layout);
 }
@@ -205,7 +200,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
   
-  document.getElementById('cardContainer').addEventListener('input', (event) => {
+  document.getElementById('cardContainer').addEventListener('change', (event) => {
     if (event.target.id === 'rollrange') {
       const value = event.target.value;
       sendMessage(createJson("roll", value));
