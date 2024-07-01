@@ -116,6 +116,8 @@ void loop() {
 
   unsigned long currentTime = millis();
   if (currentTime - lastNotifyTime >= notifyInterval) {
+    pir->notify();
+    resistor->notify();
     light->notify();
     roll->notify();
     lastNotifyTime = currentTime;
