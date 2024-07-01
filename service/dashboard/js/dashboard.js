@@ -43,7 +43,7 @@ const chartData = {
       },
       yaxis: {
         title: 'acceso in %',
-        range: [0, 100]
+        range: [0, 1]
       }
     },
   }
