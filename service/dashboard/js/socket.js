@@ -24,14 +24,10 @@ webSocket.onmessage = (event) => {
   if (window.location.pathname.includes('room.html')) {
     console.log('WebSocket message received:', event);
     const data = JSON.parse(event.data);
-    const measure = data.measure;
-    const name = data.name;
-    const room = data.room;
-    const namechart = name + "chart";
-    if (room == new URLSearchParams(window.location.search).get('room')) {
-      updateDashboard(name, measure);
-      if (name == "light" || name == "roll") {
-        updateChart(namechart, chartData[name].data, chartData[name].layout, data.timestamp, data.measure);
+    if ( data.room == new URLSearchParams(window.location.search).get('room')) {
+      updateDashboard(data.name, data.measure);
+      if (data.name == "light" || data.name == "roll") {
+        updateChart(data.name, data.timestamp, data.measure);
       }
     }
   }

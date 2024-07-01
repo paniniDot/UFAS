@@ -1,5 +1,54 @@
 const room = new URLSearchParams(window.location.search).get('room')
 
+const chartData = {
+  roll: {
+    data: [
+      {
+        x: [],
+        y: [],
+        type: 'scatter',
+        mode: 'lines',
+      }
+    ],
+    layout: {
+      title: 'Storico tenda',
+      xaxis: {
+        title: 'hh:mm:ss',
+        type: 'category',
+        range: [0, 4],
+        tickformat: '%H:%M:%S'
+      },
+      yaxis: {
+        title: 'aperto in %',
+        range: [0, 100]
+      }
+    },
+  },
+  light: {
+    data: [
+      {
+        x: [],
+        y: [],
+        type: 'scatter',
+        mode: 'lines',
+      }
+    ],
+    layout: {
+      title: 'Storico luce',
+      xaxis: {
+        title: 'hh:mm:ss',
+        range: [0, 4],
+        type: 'category',
+        tickformat: '%H:%M:%S'
+      },
+      yaxis: {
+        title: 'acceso in %',
+        range: [0, 100]
+      }
+    },
+  }
+};
+
 function createJson(obj, value) {
   const json = {
     name: obj,
@@ -164,80 +213,5 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
-const chartData = {
-  roll: {
-    data: [
-      {
-        x: [],
-        y: [],
-        type: 'bar',
-      }
-    ],
-    layout: {
-      title: 'Storico tenda',
-      xaxis: {
-        title: 'hh:mm:ss',
-        type: 'category',
-        range: [0, 4],
-        tickformat: '%D-%H'
-      },
-      yaxis: {
-        title: 'aperto in %',
-        range: [0, 100]
-      }
-    },
-  },
-  light: {
-    data: [
-      {
-        x: [],
-        y: [],
-        type: 'bar',
-      }
-    ],
-    layout: {
-      title: 'Storico luce',
-      xaxis: {
-        title: 'hh:mm:ss',
-        range: [0, 4],
-        type: 'category',
-        tickformat: '%D-%H'
-      },
-      yaxis: {
-        title: 'acceso in %',
-        range: [0, 100]
-      }
-    },
-  }
-};
 
-function initializeChart(chartId, data, layout) {
-  Plotly.newPlot(chartId, data, layout, {
-    displayModeBar: true,
-    responsive: true
-  });
-}
 
-function updateChart(chartId, data, layout, time, value) {
-  const date = new Date(time * 1000)
-  const hours = date.getHours()
-  const minutes = date.getMinutes()
-  const seconds = date.getSeconds()
-
-  if (data[0].x.length >= 4) {
-    data[0].x.shift();
-    data[0].y.shift();
-  }
-
-  if (value >= 0) {
-    const Column = `${hours}:${minutes}:${seconds}`;
-    if (!data[0].x.includes(Column)) {
-      data[0].x.push(Column);
-      data[0].y.push((1 / 3600) * 100);
-    } else {
-      data[0].y[data[0].x.indexOf(Column)] = data[0].y[data[0].x.indexOf(Column)] + (1 / 3600) * 100;
-    }
-  }
-
-  Plotly.update(chartId, data, layout);
-}
