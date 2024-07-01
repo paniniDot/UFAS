@@ -58,6 +58,38 @@ function createJson(obj, value) {
   return JSON.stringify(json);
 }
 
+function initializeChart(chartId, data, layout) {
+  Plotly.newPlot(chartId, data, layout, {
+    displayModeBar: true,
+    responsive: true
+  });
+}
+
+function updateChart(name, time, value) {
+  const date = new Date(time * 1000);
+  const hours = date.getHours();
+  const minutes = date.getMinutes();
+  const seconds = date.getSeconds();
+
+  const Column = `${hours}:${minutes}:${seconds}`;
+
+  if (chartData[name].data[0].x.length >= 4) {
+    chartData[name].data[0].x.shift();
+    chartData[name].data[0].y.shift();
+  }
+
+  if (!chartData[name].data[0].x.includes(Column)) {
+    chartData[name].data[0].x.push(Column);
+    chartData[name].data[0].y.push(value);
+  } else {
+    const index = chartData[name].data[0].x.indexOf(Column);
+    chartData[name].data[0].y[index] = chartData[name].data[0].y[index] + value;
+  }
+
+  Plotly.update(name + "chart", chartData[name].data, chartData[name].layout);
+}
+
+
 function createRollCard() {
   return `
       <div id="roll-card" class="card m-2" style="min-width: 600px;">
@@ -215,33 +247,3 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-function initializeChart(chartId, data, layout) {
-  Plotly.newPlot(chartId, data, layout, {
-    displayModeBar: true,
-    responsive: true
-  });
-}
-
-function updateChart(name, time, value) {
-  const date = new Date(time * 1000);
-  const hours = date.getHours();
-  const minutes = date.getMinutes();
-  const seconds = date.getSeconds();
-
-  const Column = `${hours}:${minutes}:${seconds}`;
-
-  if (chartData[name].data[0].x.length >= 4) {
-    chartData[name].data[0].x.shift();
-    chartData[name].data[0].y.shift();
-  }
-
-  if (!chartData[name].data[0].x.includes(Column)) {
-    chartData[name].data[0].x.push(Column);
-    chartData[name].data[0].y.push(value);
-  } else {
-    const index = chartData[name].data[0].x.indexOf(Column);
-    chartData[name].data[0].y[index] = chartData[name].data[0].y[index] + value;
-  }
-
-  Plotly.update(name + "chart", chartData[name].data, chartData[name].layout);
-}
