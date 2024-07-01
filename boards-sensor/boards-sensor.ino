@@ -76,11 +76,25 @@ void connectToMQTT() {
 void messageReceivedCallback(char* topic, byte* payload, unsigned int length) {
   Serial.print("Message received from server: ");
 
+  String message;
   for (unsigned int i = 0; i < length; i++) {
-    Serial.print((char)payload[i]);
+    message += (char)payload[i];
   }
-  Serial.println();
+  Serial.println(message);
+
+  if (String(topic) == String(RECEIVE_TOPIC) + "/light") {
+    int lightValue = message.toInt();
+    light->update(lightValue);
+    Serial.print("Light value updated to: ");
+    Serial.println(lightValue);
+  } else if (String(topic) == String(RECEIVE_TOPIC) + "/roll") {
+    int rollValue = message.toInt();
+    roll->update(rollValue);
+    Serial.print("Roll value updated to: ");
+    Serial.println(rollValue);
+  }
 }
+
 
 void setup() {
   Serial.begin(19200);
