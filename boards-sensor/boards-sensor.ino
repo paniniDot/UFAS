@@ -25,7 +25,7 @@
 
 // MQTT Topics
 #define SEND_TOPIC "house/output/room1"
-#define RECEIVE_TOPIC "house/input/room1"
+#define RECEIVE_TOPIC "house/input/room1/#"
 
 // Notification Configuration
 unsigned long lastNotifyTime = 0;
@@ -83,16 +83,16 @@ void messageReceivedCallback(char* topic, byte* payload, unsigned int length) {
   Serial.println(message);
 
   if (String(topic) == String(RECEIVE_TOPIC) + "/manual_light") {
-    Event<int> e(EventSourceType::LIGHT, new int(message.toInt()));
+    Event<int> e(EventSourceType::MANUAL_LIGHT, new int(message.toInt()));
     light->update(&e);
   } else if (String(topic) == String(RECEIVE_TOPIC) + "/light") {
-    Event<int> e(EventSourceType::MANUAL_LIGHT, new int(message.toInt()));
+    Event<int> e(EventSourceType::LIGHT, new int(message.toInt()));
     light->update(&e);
   } else if (String(topic) == String(RECEIVE_TOPIC) + "/manual_roll") {
     Event<int> e(EventSourceType::MANUAL_ROLL, new int(message.toInt()));
     roll->update(&e);
   } else if (String(topic) == String(RECEIVE_TOPIC) + "/roll") {
-    Event<int> e(EventSourceType::MANUAL_ROLL, new int(message.toInt()));
+    Event<int> e(EventSourceType::ROLL, new int(message.toInt()));
     roll->update(&e);
   }
 }

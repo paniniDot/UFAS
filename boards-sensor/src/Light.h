@@ -16,8 +16,6 @@ private:
   int photoresistor_state;
   int manual_state;
   int light_state;
-  void handleEvent(Event<int> *e);
-  void updateLightState();
 
 public:
   Light(int pin);

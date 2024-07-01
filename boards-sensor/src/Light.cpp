@@ -11,28 +11,28 @@ Light::Light(int pin)
 }
 
 void Light::update(Event<int> *e) {
-  this->handleEvent(e);
-  this->updateLightState();
-  this->notify();
-}
-
-void Light::handleEvent(Event<int> *e) {
   EventSourceType source = e->getSrcType();
   int measure = *(e->getEventArgs());
   if (source == EventSourceType::MANUAL_LIGHT) {
     this->manual_state = measure;
+    Serial.print("manual");
+    Serial.println(measure);
   } else if (source == EventSourceType::PIR) {
     this->pir_state = measure;
   } else if (source == EventSourceType::PHOTO_RESISTOR) {
     this->photoresistor_state = measure;
+  } else if (source == EventSourceType::LIGHT) {
+    if (this->manual_state) {
+      Serial.print("light");
+      Serial.println(measure);
+      this->light_state = measure;
+    }
   }
-}
-
-void Light::updateLightState() {
   if (!this->manual_state) {
     this->light_state = (pir_state && photoresistor_state) ? 1 : 0;
   }
   digitalWrite(this->pin, this->light_state ? HIGH : LOW);
+  this->notify();
 }
 
 void Light::notify() {
