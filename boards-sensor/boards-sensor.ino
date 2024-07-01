@@ -25,7 +25,8 @@
 
 // MQTT Topics
 #define SEND_TOPIC "house/output/room1"
-#define RECEIVE_TOPIC "house/input/room1/#"
+#define RECEIVE_TOPIC "house/input/room1"
+#define RECEIVE_TOPICH "house/input/room1/#"
 
 // Notification Configuration
 unsigned long lastNotifyTime = 0;
@@ -65,7 +66,7 @@ void connectToMQTT() {
   while (!mqttClient.connected()) {
     if (mqttClient.connect(MQTT_CLIENT_ID)) {
       Serial.println("Connected to MQTT server");
-      mqttClient.subscribe(RECEIVE_TOPIC);
+      mqttClient.subscribe(RECEIVE_TOPICH);
     } else {
       Serial.print(".");
       delay(500);
@@ -81,6 +82,8 @@ void messageReceivedCallback(char* topic, byte* payload, unsigned int length) {
     message += (char)payload[i];
   }
   Serial.println(message);
+  Serial.println(String(topic));
+  Serial.println(String(RECEIVE_TOPIC));
 
   if (String(topic) == String(RECEIVE_TOPIC) + "/manual_light") {
     Event<int> e(EventSourceType::MANUAL_LIGHT, new int(message.toInt()));
