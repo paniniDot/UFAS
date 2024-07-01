@@ -123,7 +123,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
   });
-
+  
   document.getElementById('cardContainer').addEventListener('input', (event) => {
     if (event.target.id === 'rollrange') {
       const value = event.target.value;
@@ -137,26 +137,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.getElementById('cardContainer').addEventListener('input', (event) => {
     if (event.target.id === 'rollcheck') {
-      const lightswitch = document.getElementById("rollrange");
-      if (event.target.checked) {
-        lightswitch.disabled  = false;
-        sendMessage(createJson("manual_light", 1));
-      }else {
-        lightswitch.disabled  = true;
-        sendMessage(createJson("manual_light", 0));
-      }
-    }
-  });
-
-  document.getElementById('cardContainer').addEventListener('input', (event) => {
-    if (event.target.id === 'lightcheck') {
-      const range = document.getElementById('lightswitch');
+      const range = document.getElementById('rollrange');
       if (event.target.checked) {
         range.disabled  = false;
         sendMessage(createJson("manual_roll", 1));
       }else {
         range.disabled  = true;
         sendMessage(createJson("manual_roll", 0));
+      }
+    }
+  });
+
+  document.getElementById('cardContainer').addEventListener('input', (event) => {
+    if (event.target.id === 'lightcheck') {
+
+      const lightswitch = document.getElementById("lightswitch");
+      if (event.target.checked) {
+        lightswitch.disabled  = false;
+        sendMessage(createJson("manual_light", 1));
+      }else {
+        lightswitch.disabled  = true;
+        sendMessage(createJson("manual_light", 0));
       }
     }
   });
