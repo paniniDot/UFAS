@@ -15,6 +15,10 @@ function createRollCard() {
           <div class="card-header">roll</div>
           <div class="card-body p-0">
               <form class="col-12">
+                  <div class="form-check">
+                      <input class="form-check-input" type="checkbox" value="" id="rollcheck">
+                      <label class="form-check-label" for="rollcheck">manuale</label>
+                  </div>
                   <label for="rollrange" class="form-label"></label>
                   <div class="d-flex justify-content-around">
                       <i class="bi bi-arrow-down"></i>
@@ -39,6 +43,10 @@ function createLightCard() {
           <div class="card-header">light</div>
           <div class="card-body">
               <form>
+                  <div class="form-check">
+                      <input class="form-check-input" type="checkbox" value="" id="lightcheck">
+                      <label class="form-check-label" for="lightcheck">manuale</label>
+                  </div>
                   <div class="form-check form-switch">
                       <input class="form-check-input" type="checkbox" role="switch" id="lightswitch">
                       <label class="form-check-label" for="lightswitch">light</label>
@@ -83,6 +91,7 @@ function updateDashboard(name, value) {
   if (name === "light") {
     const lightbulbIcon = document.getElementById("icon");
     const lightswitch = document.getElementById("lightswitch");
+    lightswitch.disabled = false;
     lightswitch.checked = value;
     if (lightswitch.checked) {
       lightbulbIcon.classList.replace("bi-lightbulb-off", "bi-lightbulb");
@@ -92,6 +101,7 @@ function updateDashboard(name, value) {
   } else if (name === "roll") {
     const range = document.getElementById('rollrange');
     const valueSpan = document.getElementById('rollvalue');
+    range.disabled = false;
     valueSpan.textContent = `${value}`;
     const offset = ((value - range.min + 2) / (range.max - range.min + 4)) * range.offsetWidth;
     valueSpan.style.transform = `translateX(${offset}px) translateY(-120%)`;
@@ -115,13 +125,24 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   document.getElementById('cardContainer').addEventListener('input', (event) => {
-    if (event.target.id === 'rollrange') {
-      const value = event.target.value;
-      sendMessage(createJson("roll", value));
-      const valueSpan = document.getElementById('rollvalue');
-      valueSpan.textContent = `${value}`;
-      const offset = ((value - event.target.min + 2) / (event.target.max - event.target.min + 4)) * event.target.offsetWidth;
-      valueSpan.style.transform = `translateX(${offset}px) translateY(-120%)`;
+    if (event.target.id === 'rollcheck') {
+      const lightswitch = document.getElementById("lightswitch");
+      if (event.target.checked) {
+        lightswitch.disabled  = false;
+      }else {
+        lightswitch.disabled  = true;
+      }
+    }
+  });
+
+  document.getElementById('cardContainer').addEventListener('input', (event) => {
+    if (event.target.id === 'lightcheck') {
+      const range = document.getElementById('rollrange');
+      if (event.target.checked) {
+        range.disabled  = false;
+      }else {
+        range.disabled  = true;
+      }
     }
   });
 });
