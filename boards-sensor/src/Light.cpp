@@ -15,16 +15,12 @@ void Light::update(Event<int> *e) {
   int measure = *(e->getEventArgs());
   if (source == EventSourceType::MANUAL_LIGHT) {
     this->manual_state = measure;
-    Serial.print("manual");
-    Serial.println(measure);
   } else if (source == EventSourceType::PIR) {
     this->pir_state = measure;
   } else if (source == EventSourceType::PHOTO_RESISTOR) {
     this->photoresistor_state = measure;
   } else if (source == EventSourceType::LIGHT) {
     if (this->manual_state) {
-      Serial.print("light");
-      Serial.println(measure);
       this->light_state = measure;
     }
   }

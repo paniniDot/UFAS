@@ -19,8 +19,6 @@ private:
   int isDay;
   int pir_state;
   int manual_state;
-  void handleEvent(Event<int> *e);
-  void updateRollState();
 
 public:
   Roll(int pin);
