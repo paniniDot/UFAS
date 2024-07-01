@@ -1,3 +1,5 @@
+import { load_data } from './firebase.js';
+
 const room = new URLSearchParams(window.location.search).get('room')
 
 const chartData = {
@@ -15,7 +17,7 @@ const chartData = {
       xaxis: {
         title: 'hh:mm:ss',
         type: 'category',
-        range: [0, 4],
+        //range: [0, 4],
         tickformat: '%H:%M:%S'
       },
       yaxis: {
@@ -37,7 +39,7 @@ const chartData = {
       title: 'Storico luce',
       xaxis: {
         title: 'hh:mm:ss',
-        range: [0, 4],
+        //range: [0, 4],
         type: 'category',
         tickformat: '%H:%M:%S'
       },
@@ -65,6 +67,22 @@ function initializeChart(chartId, data, layout) {
   });
 }
 
+function loadChart(name, data) {
+  data.sort((a, b) => a.timestamp - b.timestamp);
+  data.forEach((item) => {
+    const date = new Date(item.timestamp * 1000);
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+    const seconds = date.getSeconds();
+    const Column = `${hours}:${minutes}:${seconds}`;
+
+    chartData[name].data[0].x.push(Column);
+    chartData[name].data[0].y.push(item.measure);
+  });
+
+  Plotly.update(name + "chart", chartData[name].data, chartData[name].layout);
+}
+
 function updateChart(name, time, value) {
   const date = new Date(time * 1000);
   const hours = date.getHours();
@@ -74,8 +92,8 @@ function updateChart(name, time, value) {
   const Column = `${hours}:${minutes}:${seconds}`;
 
   if (chartData[name].data[0].x.length >= 4) {
-    chartData[name].data[0].x.shift();
-    chartData[name].data[0].y.shift();
+    //chartData[name].data[0].x.shift();
+    //chartData[name].data[0].y.shift();
   }
 
   chartData[name].data[0].x.push(Column);
@@ -157,9 +175,11 @@ function updateDashboard(name, value) {
   if (name === "light" && !document.getElementById("light-card")) {
     container.insertAdjacentHTML('beforeend', createLightCard());
     initializeChart('lightchart', chartData.light.data, chartData.light.layout);
+    loadChart("light", load_data("light", 4))
   } else if (name === "roll" && !document.getElementById("roll-card")) {
     container.insertAdjacentHTML('beforeend', createRollCard());
     initializeChart('rollchart', chartData.roll.data, chartData.roll.layout);
+    loadChart("roll", load_data("roll", 4))
   } else if (name === "camera" && !document.getElementById("cam-card")) {
     container.insertAdjacentHTML('beforeend', createCamCard());
   }
@@ -240,5 +260,5 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
-
+export {updateChart, updateDashboard}
 
