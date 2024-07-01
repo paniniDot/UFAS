@@ -123,14 +123,27 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
   });
+  
+  document.getElementById('cardContainer').addEventListener('input', (event) => {
+    if (event.target.id === 'rollrange') {
+      const value = event.target.value;
+      sendMessage(createJson("roll", value));
+      const valueSpan = document.getElementById('rollvalue');
+      valueSpan.textContent = `${value}`;
+      const offset = ((value - event.target.min + 2) / (event.target.max - event.target.min + 4)) * event.target.offsetWidth;
+      valueSpan.style.transform = `translateX(${offset}px) translateY(-120%)`;
+    }
+  });
 
   document.getElementById('cardContainer').addEventListener('input', (event) => {
     if (event.target.id === 'rollcheck') {
       const lightswitch = document.getElementById("lightswitch");
       if (event.target.checked) {
         lightswitch.disabled  = false;
+        sendMessage(createJson("manual_light", 0));
       }else {
         lightswitch.disabled  = true;
+        sendMessage(createJson("manual_light", 1));
       }
     }
   });
@@ -140,8 +153,10 @@ document.addEventListener('DOMContentLoaded', () => {
       const range = document.getElementById('rollrange');
       if (event.target.checked) {
         range.disabled  = false;
+        sendMessage(createJson("manual_roll", 0));
       }else {
         range.disabled  = true;
+        sendMessage(createJson("manual_roll", 1));
       }
     }
   });
