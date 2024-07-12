@@ -8,7 +8,20 @@ import uvicorn
 import json
 import base64
 import os
+import firebase_admin
 from connectionmanager import ConnectionManager
+
+firebase_credentials = {
+}
+
+options = {
+    "databaseURL" : "https://ufas-f1ebf-default-rtdb.europe-west1.firebasedatabase.app",
+    "projectId" : "ufas-f1ebf",
+    "storageBucket" : "ufas-f1ebf.appspot.com",
+}
+
+firebase = firebase_admin.initialize_app(firebase_admin.credentials.Certificate(firebase_credentials), options)
+
 
 host = "192.168.1.47"
 port_http = 8080
