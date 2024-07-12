@@ -4,6 +4,7 @@
 #include "src/PhotoResistor.h"
 #include "src/Light.h"
 #include "src/Roll.h"
+#include "src/Sprinkler.h"
 #include "src/MqttManager.h"
 
 #define BUFFER_SIZE 2048
@@ -13,6 +14,7 @@
 #define PHOTO_RESISTOR_PIN 27
 #define LIGHT_PIN 32  // tbd
 #define ROLL_PIN 33   // tbd
+#define SPRINKLER_PIN 34  // tbd
 
 // WiFi Configuration
 #define SSID "TIM-20456855_EXT"
@@ -43,6 +45,7 @@ PhotoResistor* resistor;
 Pir* pir;
 Light* light;
 Roll* roll;
+Sprinkler* sprinkler;
 
 void connectToWiFi() {
   Serial.print("Connecting to ");
@@ -97,6 +100,9 @@ void messageReceivedCallback(char* topic, byte* payload, unsigned int length) {
   } else if (String(topic) == String(RECEIVE_TOPIC) + "/roll") {
     Event<int> e(EventSourceType::ROLL, new int(message.toInt()));
     roll->update(&e);
+  } else if (String(topic) == String(RECEIVE_TOPIC) + "/sprinkler") {
+    Event<int> e(EventSourceType::SPRINKLER, new int(message.toInt()));
+    sprinkler->update(&e);
   }
 }
 
@@ -117,6 +123,7 @@ void setup() {
   resistor = new PhotoResistor(PHOTO_RESISTOR_PIN);
   light = new Light(LIGHT_PIN);
   roll = new Roll(ROLL_PIN);
+  sprinkler = new Sprinkler(SPRINKLER_PIN);
   pir->attach(light);
   pir->attach(roll);
   resistor->attach(light);
