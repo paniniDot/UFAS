@@ -5,6 +5,7 @@
 #include "src/Light.h"
 #include "src/Roll.h"
 #include "src/Sprinkler.h"
+#include "src/Co2.h"
 #include "src/MqttManager.h"
 
 #define BUFFER_SIZE 2048
@@ -46,6 +47,7 @@ Pir* pir;
 Light* light;
 Roll* roll;
 Sprinkler* sprinkler;
+Co2* co2;
 
 void connectToWiFi() {
   Serial.print("Connecting to ");
@@ -124,12 +126,15 @@ void setup() {
   light = new Light(LIGHT_PIN);
   roll = new Roll(ROLL_PIN);
   sprinkler = new Sprinkler(SPRINKLER_PIN);
+  co2 = new Co2(5);
+  co2->begin();
   pir->attach(light);
   pir->attach(roll);
   resistor->attach(light);
   resistor->attach(roll);
   light->attach(mqttManager);
   roll->attach(mqttManager);
+  co2->attach(mqttManager);
 }
 
 void loop() {
@@ -146,6 +151,7 @@ void loop() {
     resistor->notify();
     light->notify();
     roll->notify();
+    co2->notify();
     lastNotifyTime = currentTime;
   }
 }
