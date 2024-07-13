@@ -46,6 +46,8 @@ function saveRoom(name) {
     localStorage.setItem('rooms', JSON.stringify(rooms));
 }
 
-window.onload = loadRooms;
+if (window.location.pathname.includes('house.html')) {
+    window.onload = loadRooms;
+}
 
 export { createRoomCard, removeRoom, loadRooms, saveRoom };
