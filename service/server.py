@@ -9,9 +9,11 @@ import json
 import base64
 import os
 import firebase_admin
+from firebase_admin import db
 from connectionmanager import ConnectionManager
 
 firebase_credentials = {
+
 }
 
 options = {
@@ -21,9 +23,9 @@ options = {
 }
 
 firebase = firebase_admin.initialize_app(firebase_admin.credentials.Certificate(firebase_credentials), options)
+database = db.reference("rooms")
 
-
-host = "192.168.1.47"
+host = "192.168.1.156"
 port_http = 8080
 port_mqtt = 1883
 
@@ -66,6 +68,10 @@ async def message_handler(client, topic, payload, qos, properties):
         else:
             print("No fire detected")
     data["room"] = room
+    database.child(room).child(data["name"]).push({
+        "measure": data["measure"],
+        "timestamp": data["timestamp"]
+    })
     updated_data = json.dumps(data)
     await manager.broadcast(updated_data)
 

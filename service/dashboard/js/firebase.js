@@ -1,7 +1,7 @@
 // firebase.js
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getDatabase, ref, set, push, onValue, query, orderByChild, limitToLast } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+import { getDatabase, ref, set,child,get, push, onValue, query, orderByChild, limitToLast } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyByGTsHmdsNrkeDsleCxT6MrjFFZHCHE9g",
@@ -30,18 +30,24 @@ function save_data(data) {
     });
 }
 
-function load_data(name, limit) {
+async function load_data(name) {
     const room = new URLSearchParams(window.location.search).get('room');
-    const dataRef = query(ref(database, `rooms/${room}/${name}`), orderByChild('timestamp'), limitToLast(limit));
-    const data = [];
-    onValue(dataRef, (snapshot) => {
-        snapshot.forEach((childSnapshot) => {
-            data.push(childSnapshot.val());
-        });
-    }, (error) => {
-        console.error('Error loading recent data:', error);
-    });
-    return data;
+    const dataRef = ref(database);
+
+    try {
+        const snapshot = await get(child(dataRef, `rooms/${room}/${name}`));
+        if (snapshot.exists()) {
+            console.log('Data loaded successfully');
+            let data = snapshot.val();
+            return data;
+        } else {
+            console.error('No data found');
+            return null; // Return null if no data found
+        }
+    } catch (error) {
+        console.error('Error loading data:', error);
+        return null; // Return null in case of error
+    }
 }
 
 export { save_data, load_data };

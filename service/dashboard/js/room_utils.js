@@ -47,3 +47,5 @@ function saveRoom(name) {
 }
 
 window.onload = loadRooms;
+
+export {createRoomCard, removeRoom, loadRooms, saveRoom};

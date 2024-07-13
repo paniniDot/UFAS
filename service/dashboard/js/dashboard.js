@@ -1,4 +1,5 @@
 import { load_data } from './firebase.js';
+import { sendMessage } from './socket.js';
 
 const room = new URLSearchParams(window.location.search).get('room')
 
@@ -68,13 +69,21 @@ function initializeChart(chartId, data, layout) {
 }
 
 function loadChart(name, data) {
-  data.sort((a, b) => a.timestamp - b.timestamp);
+  // Convert object to array if data is an object
+  if (!Array.isArray(data)) {
+    data = Object.values(data);
+  }
+  data = data.slice(-4);
   data.forEach((item) => {
     const date = new Date(item.timestamp * 1000);
-    const hours = date.getHours();
-    const minutes = date.getMinutes();
-    const seconds = date.getSeconds();
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    const seconds = date.getSeconds().toString().padStart(2, '0');
     const Column = `${hours}:${minutes}:${seconds}`;
+
+    if (!chartData[name]) {
+      chartData[name] = { data: [{ x: [], y: [] }], layout: {} };
+    }
 
     chartData[name].data[0].x.push(Column);
     chartData[name].data[0].y.push(item.measure);
@@ -169,17 +178,19 @@ function createCamCard() {
   `;
 }
 
-function updateDashboard(name, value) {
+async function updateDashboard(name, value) {
   const container = document.getElementById('cardContainer');
 
   if (name === "light" && !document.getElementById("light-card")) {
     container.insertAdjacentHTML('beforeend', createLightCard());
     initializeChart('lightchart', chartData.light.data, chartData.light.layout);
-    loadChart("light", load_data("light", 4))
+    let data = await load_data("light");
+    loadChart("light", data);
   } else if (name === "roll" && !document.getElementById("roll-card")) {
     container.insertAdjacentHTML('beforeend', createRollCard());
     initializeChart('rollchart', chartData.roll.data, chartData.roll.layout);
-    loadChart("roll", load_data("roll", 4))
+    let data = await load_data("roll");
+    loadChart("roll", data);
   } else if (name === "camera" && !document.getElementById("cam-card")) {
     container.insertAdjacentHTML('beforeend', createCamCard());
   }
@@ -219,7 +230,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
   });
-  
+
   document.getElementById('cardContainer').addEventListener('change', (event) => {
     if (event.target.id === 'rollrange') {
       const value = event.target.value;
@@ -235,10 +246,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (event.target.id === 'rollcheck') {
       const range = document.getElementById('rollrange');
       if (event.target.checked) {
-        range.disabled  = false;
+        range.disabled = false;
         sendMessage(createJson("manual_roll", 1));
-      }else {
-        range.disabled  = true;
+      } else {
+        range.disabled = true;
         sendMessage(createJson("manual_roll", 0));
       }
     }
@@ -249,10 +260,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const lightswitch = document.getElementById("lightswitch");
       if (event.target.checked) {
-        lightswitch.disabled  = false;
+        lightswitch.disabled = false;
         sendMessage(createJson("manual_light", 1));
-      }else {
-        lightswitch.disabled  = true;
+      } else {
+        lightswitch.disabled = true;
         sendMessage(createJson("manual_light", 0));
       }
     }
@@ -260,5 +271,5 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
-export {updateChart, updateDashboard}
+export { updateChart, updateDashboard }
 

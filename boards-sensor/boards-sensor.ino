@@ -17,11 +17,11 @@
 #define SPRINKLER_PIN 34  // tbd
 
 // WiFi Configuration
-#define SSID "TIM-20456855_EXT"
-#define PASSWORD "mattimichi"
+#define SSID "asus"
+#define PASSWORD "0123456789"
 
 // MQTT Configuration
-#define MQTT_SERVER "192.168.1.47"
+#define MQTT_SERVER "192.168.1.156"
 #define MQTT_PORT 1883
 #define MQTT_CLIENT_ID "room1/esp1"
 
