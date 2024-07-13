@@ -48,4 +48,4 @@ function saveRoom(name) {
 
 window.onload = loadRooms;
 
-export {createRoomCard, removeRoom, loadRooms, saveRoom};
+export { createRoomCard, removeRoom, loadRooms, saveRoom };

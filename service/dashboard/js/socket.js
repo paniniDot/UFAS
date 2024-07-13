@@ -27,7 +27,7 @@ webSocket.onmessage = (event) => {
   if (window.location.pathname.includes('room.html')) {
     console.log('WebSocket message received:', event);
     const data = JSON.parse(event.data);
-    if ( data.room == new URLSearchParams(window.location.search).get('room')) {
+    if (data.room == new URLSearchParams(window.location.search).get('room')) {
       updateDashboard(data.name, data.measure);
       if (data.name == "light" || data.name == "roll") {
         updateChart(data.name, data.timestamp, data.measure);

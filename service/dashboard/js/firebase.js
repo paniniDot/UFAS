@@ -1,7 +1,7 @@
 // firebase.js
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getDatabase, ref, set,child,get, push, onValue, query, orderByChild, limitToLast } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+import { getDatabase, ref, set, child, get, push } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyByGTsHmdsNrkeDsleCxT6MrjFFZHCHE9g",
@@ -16,24 +16,22 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
+const dataRef = ref(database);
 
 function save_data(data) {
-    const dataRef = ref(database, `rooms/${data.room}/${data.name}`);
-    const newDataRef = push(dataRef);
-    set(newDataRef, {
+    set(push(child(dataRef, `rooms/${data.room}/${data.name}`), {
         measure: data.measure,
         timestamp: data.timestamp
-    }).then(() => {
+    })).then(() => {
         console.log('Data saved successfully');
-    }).catch((error) => {
+    }
+    ).catch((error) => {
         console.error('Error saving data:', error);
     });
 }
 
 async function load_data(name) {
     const room = new URLSearchParams(window.location.search).get('room');
-    const dataRef = ref(database);
-
     try {
         const snapshot = await get(child(dataRef, `rooms/${room}/${name}`));
         if (snapshot.exists()) {
