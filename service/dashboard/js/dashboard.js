@@ -17,9 +17,7 @@ const chartData = {
       title: 'Storico tenda',
       xaxis: {
         title: 'hh:mm:ss',
-        type: 'category',
-        //range: [0, 4],
-        tickformat: '%H:%M:%S'
+        type: 'date',
       },
       yaxis: {
         title: 'aperto in %',
@@ -40,9 +38,7 @@ const chartData = {
       title: 'Storico luce',
       xaxis: {
         title: 'hh:mm:ss',
-        //range: [0, 4],
-        type: 'category',
-        tickformat: '%H:%M:%S'
+        type: 'date',
       },
       yaxis: {
         title: 'acceso in %',
@@ -73,19 +69,10 @@ function loadChart(name, data) {
   if (!Array.isArray(data)) {
     data = Object.values(data);
   }
-  data = data.slice(-4);
+  //data = data.slice(-4);
   data.forEach((item) => {
     const date = new Date(item.timestamp * 1000);
-    const hours = date.getHours().toString().padStart(2, '0');
-    const minutes = date.getMinutes().toString().padStart(2, '0');
-    const seconds = date.getSeconds().toString().padStart(2, '0');
-    const Column = `${hours}:${minutes}:${seconds}`;
-
-    if (!chartData[name]) {
-      chartData[name] = { data: [{ x: [], y: [] }], layout: {} };
-    }
-
-    chartData[name].data[0].x.push(Column);
+    chartData[name].data[0].x.push(date);
     chartData[name].data[0].y.push(item.measure);
   });
 
@@ -94,18 +81,13 @@ function loadChart(name, data) {
 
 function updateChart(name, time, value) {
   const date = new Date(time * 1000);
-  const hours = date.getHours();
-  const minutes = date.getMinutes();
-  const seconds = date.getSeconds();
-
-  const Column = `${hours}:${minutes}:${seconds}`;
 
   if (chartData[name].data[0].x.length >= 4) {
     //chartData[name].data[0].x.shift();
     //chartData[name].data[0].y.shift();
   }
 
-  chartData[name].data[0].x.push(Column);
+  chartData[name].data[0].x.push(date);
   chartData[name].data[0].y.push(value);
 
   Plotly.update(name + "chart", chartData[name].data, chartData[name].layout);
