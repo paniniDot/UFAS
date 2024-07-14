@@ -9,7 +9,7 @@
 #include "observer/Event.h"
 #include "observer/EventSourceType.h"
 
-class CO2 : public JSONSensor<int>, public Subject<String>
+class Co2 : public JSONSensor<int>, public Subject<String>
 {
 private:
   PASCO2Ino cotwo;
@@ -18,7 +18,7 @@ private:
   int measInterval;
 
 public:
-  CO2(int interval = 10); // Default interval to 10 seconds
+  Co2(int interval = 10); // Default interval to 10 seconds
   void begin();
   void measure();
   void notify();

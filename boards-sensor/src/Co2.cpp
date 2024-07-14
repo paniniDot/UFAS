@@ -1,12 +1,12 @@
 #include "CO2.h"
 
-CO2::CO2(int interval)
+Co2::Co2(int interval)
   : JSONSensor("co2"), measInterval(interval) {
   this->co2ppm = 0;
   this->err = XENSIV_PASCO2_OK;
 }
 
-void CO2::begin() {
+void Co2::begin() {
   // Initialize the i2c interface used by the sensor
   Wire.begin();
   Wire.setClock(I2C_FREQ_HZ);
@@ -19,7 +19,7 @@ void CO2::begin() {
   }
 }
 
-void CO2::measure() {
+void Co2::measure() {
   // Trigger a one shot measurement
   err = cotwo.startMeasure();
   if (XENSIV_PASCO2_OK != err) {
@@ -46,8 +46,8 @@ void CO2::measure() {
   this->notify();
 }
 
-void CO2::notify() {
-  Event<String> *json = new Event<String>(EventSourceType::CO2, new String(this->getJson(this->co2ppm)));
+void Co2::notify() {
+  Event<String> *json = new Event<String>(EventSourceType::CO52, new String(this->getJson(this->co2ppm)));
   for (int i = 0; i < this->getNObservers(); i++) {
     this->getObservers()[i]->update(json);
   }
