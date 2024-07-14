@@ -126,7 +126,7 @@ void setup() {
   light = new Light(LIGHT_PIN);
   roll = new Roll(ROLL_PIN);
   sprinkler = new Sprinkler(SPRINKLER_PIN);
-  co2 = new Co2(5);
+  co2 = new Co2();
   co2->begin();
   pir->attach(light);
   pir->attach(roll);

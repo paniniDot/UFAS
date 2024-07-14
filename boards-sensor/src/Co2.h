@@ -16,9 +16,17 @@ private:
   int16_t co2ppm;
   Error_t err;
   int measInterval;
+  int state;
+  unsigned long lastMeasureTime;
+  void startMeasurement();
+  enum State {
+    IDLE,
+    MEASURING,
+    DONE
+  };
 
 public:
-  Co2(int interval = 10); // Default interval to 10 seconds
+  Co2(); // Default interval to 10 seconds
   void begin();
   void measure();
   void notify();

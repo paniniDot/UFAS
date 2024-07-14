@@ -10,7 +10,8 @@ enum EventSourceType
     MANUAL_ROLL,
     LIGHT,
     CAMERA,
-    SPRINKLER
+    SPRINKLER, 
+    CO2
 };
 
 #endif
