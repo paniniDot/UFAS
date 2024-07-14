@@ -17,9 +17,10 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
 const dataRef = ref(database);
+const house = "house1"
 
 function save_data(data) {
-    set(push(child(dataRef, `rooms/${data.room}/${data.name}`), {
+    set(push(child(dataRef, `${house}/${data.room}/${data.name}`), {
         measure: data.measure,
         timestamp: data.timestamp
     })).then(() => {
@@ -33,7 +34,7 @@ function save_data(data) {
 async function load_data(name) {
     const room = new URLSearchParams(window.location.search).get('room');
     try {
-        const snapshot = await get(child(dataRef, `rooms/${room}/${name}`));
+        const snapshot = await get(child(dataRef, `${house}/${room}/${name}`));
         if (snapshot.exists()) {
             console.log('Data loaded successfully');
             let data = snapshot.val();
